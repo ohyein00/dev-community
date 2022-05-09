@@ -1,5 +1,9 @@
-from flask import Flask, render_template
+from pymongo import MongoClient
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 
+
+client = MongoClient('3.34.47.86', 27017, username="test", password="test")
+db = client.devom
 
 app = Flask(__name__)
 
