@@ -22,7 +22,7 @@ def profile():
     return render_template("profile.html")
 
 @app.route('/post_content')
-def profile():
+def post_content():
     return render_template("post_content.html")
 
 if __name__ == '__main__':
