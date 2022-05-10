@@ -105,10 +105,10 @@ function get_posts() {
                     let image_temp = ``;
                     let comment_temp = ``;
                     console.log(comment_list)
-                    for (let j = 0; j < image_list.length; j++) {
-                        let temp = `<li><img src="${image_list[j]}"  alt="${j}번째 이미지"/></li>`;
-
+                    for (const file of image_list) {
+                        let temp = `<li><img src="data:image;base64, ${file}"/></li>`;
                         image_temp = image_temp + temp;
+
                     }
                     for (let j = 0; j < comment_list.length; j++) {
                         let time_post = new Date(comment_list[j]["date"])
@@ -158,7 +158,7 @@ function get_posts() {
                                                     <p>
                                                         <strong>${post['profile_name']}</strong> <small>@${post['username']}</small> <small>${time_before}</small>
                                                         <br>
-                                                        ${post['comment']}
+                                                        ${post['text']}
                                                     </p>
 
                                                 </div>

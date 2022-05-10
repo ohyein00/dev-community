@@ -1,4 +1,3 @@
-
 import codecs
 import re
 import gridfs
@@ -6,6 +5,7 @@ import gridfs
 import jwt
 import hashlib
 from flask import Flask, render_template, jsonify, request, redirect, url_for
+from bson import ObjectId
 from werkzeug.utils import secure_filename
 
 from pymongo import MongoClient
@@ -45,17 +45,16 @@ def read():
 
 @app.route('/read_result', methods=['GET'])
 def read_result():
-    receive_id = int(request.args['id'])
-    content = db.tmp.find_one({'id': receive_id})
-    img_ids = content['img_ids']
-
+    contents = list(db.tmp.find({}))
     result = []
+    for content in contents:
+        img_ids = content['img_ids']
+        results = []
+        if len(img_ids) > 0:
+            for img_id in img_ids:
+                results.append(get_img_file(img_id))
+        result.append(results)
 
-    if len(img_ids) > 0:
-        for img_id in img_ids:
-            result.append(get_img_file(img_id))
-
-    print(result)
     return jsonify({'result': 'success', 'files': result})
 
 @app.route('/login')
@@ -76,10 +75,9 @@ def sign_in():
     if result is not None:
         payload = {
             'id': username_receive,
-            'exp': datetime.datetime.utcnow() + timedelta(seconds=60 * 60 * 24)  # 로그인 24시간 유지
+            'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)  # 로그인 24시간 유지
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
-
         return jsonify({'result': 'success', 'token': token})
     # 찾지 못하면
     else:
@@ -148,15 +146,15 @@ def posting():
         pattern = '#([0-9a-zA-Z가-힣]*)'
         find_hash = re.compile(pattern)
         hash_tags = find_hash.findall(text_receive)
-
+        text_receive =find_hash.sub("", text_receive)
         img_ids = []
         if request.files is not None:
             for file in request.files:
                 img_id = fs.put(request.files[file])
-                img_ids.append(img_id)
+                img_ids.append(str(img_id))
 
-        db.tmp.insert_one({
-            "username": user_info['id'],
+        db.post_data.insert_one({
+            "username": user_info['username'],
             "profile_name": user_info["nickname"],
             'date': date_receive,
             'text': text_receive,
@@ -194,24 +192,28 @@ def comment_list():
 
 @app.route("/get_posts", methods=['GET'])
 def get_posts():
+
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        posts = list(db.posts.find({}).sort("date", -1).limit(20))
+        posts = list(db.post_data.find({}).sort("date", -1).limit(20))
+
+
         for post in posts:
             post["_id"] = str(post["_id"])
             post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
             post["heart_by_me"] = bool(
-                db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": payload['id']}))
-            post["s3_image_list"] = ["https://devom-image.s3.ap-northeast-2.amazonaws.com/img/test/01.jpg",
-                                     "https://devom-image.s3.ap-northeast-2.amazonaws.com/img/test/02.jpg",
-                                     "https://devom-image.s3.ap-northeast-2.amazonaws.com/img/test/01.jpg",
-                                     "https://devom-image.s3.ap-northeast-2.amazonaws.com/img/test/02.jpg"]
+                db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": payload["id"]}))
+            img_ids = post['img_ids']
+            image = []
+            if len(img_ids) > 0:
+                for img_id in img_ids:
+                    image.append(get_img_file(ObjectId(img_id)))
+            post["s3_image_list"] =image
             post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
             post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
             for comment in post["comment_list"]:
                 comment["_id"] = str(comment["_id"])
-
         # 포스팅 목록 받아오기
         return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
@@ -220,21 +222,23 @@ def get_posts():
 
 @app.route("/get_guest_posts", methods=['GET'])
 def get_guest_posts():
-    posts = list(db.posts.find({}).sort("date", -1).limit(20))
+    posts = list(db.post_data.find({}).sort("date", -1).limit(20))
+
     for post in posts:
         post["_id"] = str(post["_id"])
         post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
         post["heart_by_me"] = bool(
-            db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": "Guest"}))
-        post["s3_image_list"] = ["https://devom-image.s3.ap-northeast-2.amazonaws.com/img/test/01.jpg",
-                                 "https://devom-image.s3.ap-northeast-2.amazonaws.com/img/test/02.jpg",
-                                 "https://devom-image.s3.ap-northeast-2.amazonaws.com/img/test/01.jpg",
-                                 "https://devom-image.s3.ap-northeast-2.amazonaws.com/img/test/02.jpg"]
+            db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": "GUEST"}))
+        img_ids = post['img_ids']
+        image = []
+        if len(img_ids) > 0:
+            for img_id in img_ids:
+                image.append(get_img_file(ObjectId(img_id)))
+        post["s3_image_list"] = image
         post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
         post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
         for comment in post["comment_list"]:
             comment["_id"] = str(comment["_id"])
-
     # 포스팅 목록 받아오기
     return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
 
