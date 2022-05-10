@@ -1,0 +1,93 @@
+<!Doctype html>
+<html lang="ko">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <!-- 구글폰트 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href='{{ url_for("static", filename="css/reset.css") }}' rel="stylesheet">
+    <link href='{{ url_for("static", filename="css/index.css") }}' rel="stylesheet">
+    <script src='{{ url_for("static", filename="js/index.js") }}'></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <!-- Font Awesome CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- JS -->
+
+    <title>Devom - 개발자 커뮤니티 | 프로필페이지</title>
+</head>
+
+<body>
+<div id="wrap">
+    <div id="container">
+        <div id="contents">
+            <header>
+                <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="검색 키워드를 입력하세요!">
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            </span>
+                        </div>
+                    <div class="navbar-brand">
+                        <a class="navbar-item" href="/">
+                            <strong class="is-sparta"
+                                    style="font-family: 'Stylish', sans-serif;font-size: large;"><i style="color:black"  class="fa fa-list" aria-hidden="true"></i></strong>
+                            <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">글목록</small>
+                        </a>
+                        <a class="navbar-item" href="/post_content">
+                            <strong class="is-sparta"
+                                    style="font-family: 'Stylish', sans-serif;font-size: large;"><i style="color:darkblue"  class="fa fa-pencil-square-o" aria-hidden="true"></i></strong>
+                            <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">글작성</small>
+                        </a>
+                        <a class="navbar-item" href="/like_list">
+                            <strong class="is-sparta"
+                                    style="font-family: 'Stylish', sans-serif;font-size: large;"><i style="color:crimson" class="fa fa-heart" aria-hidden="true"></i></strong>
+                            <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">북마크</small>
+                        </a>
+                        <a class="navbar-item" href="/profile">
+                            <strong class="is-sparta"
+                                    style="font-family: 'Stylish', sans-serif;font-size: large;"><i style="color:gray"  class="fa fa-user" aria-hidden="true"></i></strong>
+                            <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">프로필</small>
+                        </a>
+
+
+                    </div>
+                    <a class="login" href="/">
+                        <small class="is-sparta"
+                                style="font-family: 'Black Han Sans', sans-serif;font-size: small;">로그인</strong>
+                    </a>
+
+                </nav>
+            </header>
+            <main>
+                <section class="list_sec">
+                    리스트
+                </section>
+            </main>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
