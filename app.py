@@ -1,19 +1,33 @@
-from flask import Flask, render_template, jsonify, request, redirect, url_for, session
+
+import codecs
+import re
+import gridfs
+
+import jwt
+import hashlib
+from flask import Flask, render_template, jsonify, request, redirect, url_for
+from werkzeug.utils import secure_filename
+
 from pymongo import MongoClient
 from datetime import datetime, timedelta
-
 import certifi
-import hashlib
-import jwt
-import datetime
 
 ca = certifi.where()
 client = MongoClient('3.34.47.86', 27017, username="test", password="test")
 db = client.dbsparta
 
 app = Flask(__name__)
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config['UPLOAD_FOLDER'] = "./static/profile_pics"
 
 SECRET_KEY = 'SPARTA'
+fs = gridfs.GridFS(db)
+
+def get_img_file(img_id):
+    img_binary = fs.get(img_id)
+    base64_img = codecs.encode(img_binary.read(), 'base64')
+    decoded_img = base64_img.decode('utf-8')
+    return decoded_img
 
 
 @app.route('/')
@@ -21,6 +35,28 @@ def main():
     myname = "Devom"
     return render_template("index.html", name=myname)
 
+@app.route('/write')
+def write():
+    return render_template("write.html")
+
+@app.route('/read', methods=['GET'])
+def read():
+    return render_template("read.html")
+
+@app.route('/read_result', methods=['GET'])
+def read_result():
+    receive_id = int(request.args['id'])
+    content = db.tmp.find_one({'id': receive_id})
+    img_ids = content['img_ids']
+
+    result = []
+
+    if len(img_ids) > 0:
+        for img_id in img_ids:
+            result.append(get_img_file(img_id))
+
+    print(result)
+    return jsonify({'result': 'success', 'files': result})
 
 @app.route('/login')
 def login():
@@ -104,18 +140,30 @@ def posting():
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        # 포스팅하기
         user_info = db.users.find_one({"username": payload["id"]})
-        comment_receive = request.form["comment_give"]
-        date_receive = request.form["date_give"]
-        doc = {
-            "username": user_info["username"],
+
+        text_receive = request.form['text']
+        date_receive = request.form['date']
+
+        pattern = '#([0-9a-zA-Z가-힣]*)'
+        find_hash = re.compile(pattern)
+        hash_tags = find_hash.findall(text_receive)
+
+        img_ids = []
+        if request.files is not None:
+            for file in request.files:
+                img_id = fs.put(request.files[file])
+                img_ids.append(img_id)
+
+        db.tmp.insert_one({
+            "username": user_info['id'],
             "profile_name": user_info["nickname"],
-            "profile_pic_real": user_info["img"],
-            "comment": comment_receive,
-            "date": date_receive
-        }
-        db.posts.insert_one(doc)
+            'date': date_receive,
+            'text': text_receive,
+            'hash_tags': hash_tags,
+            'img_ids': img_ids
+        })
+
         return jsonify({"result": "success", 'msg': '포스팅 성공'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
@@ -194,6 +242,7 @@ def get_guest_posts():
 @app.route('/update_like', methods=['POST'])
 def update_like():
     # 좋아요 수 변경
+
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
@@ -218,6 +267,7 @@ def update_like():
 @app.route('/logout', methods=['GET'])
 def logout():
     return redirect("/")
+
 
 
 if __name__ == '__main__':
