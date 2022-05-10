@@ -35,6 +35,15 @@
     <!-- JS -->
 
     <title>Devom - 개발자 커뮤니티 | 프로필페이지</title>
+    <script>
+        let token = $.cookie('mytoken');
+        if (token !== undefined) {
+
+        }else {
+            alert("로그인 후에 사용하실 수 있습니다.");
+            window.location.href="/";
+        }
+    </script>
 </head>
 
 <body>
