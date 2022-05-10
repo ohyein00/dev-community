@@ -31,15 +31,14 @@
     <!-- 구글폰트 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <link href='{{ url_for("static", filename="css/reset.css") }}' rel="stylesheet">
     <link href='{{ url_for("static", filename="css/index.css") }}' rel="stylesheet">
     <link href='{{ url_for("static", filename="css/ui.css") }}' rel="stylesheet">
     <script src='{{ url_for("static", filename="js/index.js") }}'></script>
+    <script src='{{ url_for("static", filename="js/like.js") }}'></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <title>Devom - 개발자 커뮤니티</title>
 </head>
 
@@ -48,91 +47,90 @@
     <div id="container">
         <div id="contents">
             <header>
-                <h1 class="logo">{{ name }}</h1>
+                <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="검색 키워드를 입력하세요!">
+                        <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button"><i class="fa fa-search"
+                                                                                   aria-hidden="true"></i></button>
+                            </span>
+                    </div>
+                    <div class="navbar-brand">
+                        <a class="navbar-item" href="/">
+                            <strong class="is-sparta"
+                                    style="font-family: 'Stylish', sans-serif;font-size: large;"><i style="color:black"
+                                                                                                    class="fa fa-list"
+                                                                                                    aria-hidden="true"></i></strong>
+                            <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">글목록</small>
+                        </a>
+                        <p class="navbar-item" onclick='$("#modal-post").addClass("is-active")'>
+                            <strong class="is-sparta"
+                                    style="font-family: 'Stylish', sans-serif;font-size: large;"><i
+                                    style="color:darkblue" class="fa fa-pencil-square-o"
+                                    aria-hidden="true"></i></strong>
+                            <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">글작성</small>
+                        </p>
+                        <a class="navbar-item" href="/like_list">
+                            <strong class="is-sparta"
+                                    style="font-family: 'Stylish', sans-serif;font-size: large;"><i
+                                    style="color:crimson" class="fa fa-heart" aria-hidden="true"></i></strong>
+                            <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">북마크</small>
+                        </a>
+                        <a class="navbar-item" href="/profile">
+                            <strong class="is-sparta"
+                                    style="font-family: 'Stylish', sans-serif;font-size: large;"><i style="color:gray"
+                                                                                                    class="fa fa-user"
+                                                                                                    aria-hidden="true"></i></strong>
+                            <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">프로필</small>
+                        </a>
+
+
+                    </div>
+                    <a class="login" href="/">
+                        <small class="is-sparta"
+                               style="font-family: 'Black Han Sans', sans-serif;font-size: small;">로그인</small>
+                    </a>
+
+                </nav>
             </header>
             <main>
-                <section class="feed_sec">
-                    <div class="feed_group">
-                        <div class="feed_frame">
-                            <article class="feed">
-                                <div class="media user_info">
-                                    <figure class="image user_img">
-                                        <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-                                    </figure>
-                                    <div class="text_area">
-                                        <p class="user_name">
-                                            John Smith
+                <div class="modal" id="modal-post">
+                    <div class="modal-background" onclick='$("#modal-post").removeClass("is-active")'></div>
+                    <div class="modal-content">
+                        <div class="box">
+                            <article class="media">
+                                <div class="media-content">
+                                    <div class="field">
+                                        <p class="control">
+                                        <textarea id="textarea-post" class="textarea"
+                                                  placeholder="무슨 생각을 하고 계신가요?"></textarea>
                                         </p>
-                                        <p class="feed_info">
-                                            <span class="time">1시간</span>
-                                            <span class="like_count left contour">좋아요 999+</span>
-                                        </p>
-
                                     </div>
-                                </div>
-                                <div class="like_btn_area">
-                                    <a class="level-item is-sparta like_btn" aria-label="heart">
-                                        <strong class="is-sparta">
-                                            <i style="color:crimson" class="fa fa-heart"
-                                               aria-hidden="true"></i></strong>
-                                    </a>
-                                </div>
-                                <div class="feed_detail">
-                                    <p class="detail has_more">
-                                        <span class="txt">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur
-                                        sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur
-                                        sit amet massa fringilla egestas. Nullam condimentum luctus turpis.t. Aenean efficitur
-                                        sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
-                                            </span>
-                                        <button class="more_btn">
-                                            더보기
-                                        </button>
-                                    </p>
+                                    <nav class="level is-mobile">
+                                        <div class="level-left">
 
-                                    <div class="img_group">
-                                        <div class="img_frame">
-                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
                                         </div>
-                                        <div class="img_frame">
-                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                                        <div class="level-right">
+                                            <div class="level-item">
+                                                <a class="button is-sparta" onclick="post()">포스팅하기</a>
+                                            </div>
+                                            <div class="level-item">
+                                                <a class="button is-sparta is-outlined"
+                                                   onclick='$("#modal-post").removeClass("is-active")'>취소</a>
+                                            </div>
                                         </div>
-                                        <div class="img_frame">
-                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-                                        </div>
-                                    </div>
+                                    </nav>
                                 </div>
                             </article>
-                            <div class="feed_comment">
-                                <div class="comment_group">
-                                    <div class="comment_frame">
-                                        <figure class="user_img">
-                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-                                        </figure>
-                                        <div class="comment_detail">
-                                            <p class="user_name">
-                                                이름
-                                                <small class="time contour left">1시간</small>
-                                            </p>
-                                            <p class="user_comment">댓글 댓글댓글 댓글</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="input_wrap">
-                                    <form>
-                                        <div class="input_area gray_type is_flex">
-                                            <label>
-                                                <input type="text" placeholder="댓글을 입력하세요" maxlength="100">
-                                            </label>
-                                            <button type="submit">
-                                                입력
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
                         </div>
+                    </div>
+
+                    <button class="modal-close is-large" aria-label="close"
+                            onclick='$("#modal-post").removeClass("is-active")'></button>
+                </div>
+                <section class="list_sec">
+                    <div id="post-box" class="container">
+
                     </div>
                 </section>
             </main>
