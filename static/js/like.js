@@ -30,7 +30,7 @@ function time2str(date) {
 }
 
 function comment(id) {
-    let comment = $(`.${id} > input`).val();
+    let comment = $(`.${id}  input`).val();
     let today = new Date().toISOString()
     console.log(comment);
     $.ajax({
@@ -42,7 +42,6 @@ function comment(id) {
             date_give: today
         },
         success: function (response) {
-            $("#modal-post").removeClass("is-active")
             window.location.reload()
         }
     })
@@ -106,111 +105,88 @@ function get_posts() {
                     let comment_temp = ``;
                     console.log(comment_list)
                     for (const file of image_list) {
-                        let temp = `<li><img src="data:image;base64, ${file}"/></li>`;
+                        let temp = `<div class="img_frame">
+                                            <img src="data:image;base64, ${file}"/></li>
+                                        </div>`;
                         image_temp = image_temp + temp;
 
                     }
                     for (let j = 0; j < comment_list.length; j++) {
                         let time_post = new Date(comment_list[j]["date"])
                         let time_before = time2str(time_post)
-                        let temp = `<div class="box" id="${comment_list[j]["_id"]}">
-                                                                    <article class="media">
-                                                                        <div class="media-left">
-                                                                            <a class="image is-64x64" href="/user/${comment_list[j]['username']}">
-                                                                                <strong class="is-sparta"
-                                                                            style="font-family: 'Stylish', sans-serif;font-size: xxx-large;"><i
-                                                                            style="color:gray"
-                                                                            class="fa fa-user"
-                                                                            aria-hidden="true"></i></strong>
-                                                                            </a>
-                                                                        </div>
-                                                                        <div class="media-content">
-                                                                        <div>
-                                                                            <div class="content">
-                                                                                <p>
-                                                                                    <strong>${comment_list[j]['profile_name']}</strong> <small>@${comment_list[j]['username']}</small> <small>${time_before}</small>
-                                                                                    <br>
-                                                                                    ${comment_list[j]['comment']}
-                                                                                </p>
+                        let temp= `<div class="comment_frame" id="${comment_list[j]["_id"]}">
+                                        <figure class="user_img">
+                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                                        </figure>
+                                        <div class="comment_detail">
+                                            <p class="user_name">
+                                                <strong>${comment_list[j]['profile_name']}</strong> 
+                                                <small style="font-size: xx-small">@${comment_list[j]['username']}</small>
+                                                <small class="time contour left">${time_before}</small>
+                                            </p>
+                                            <p class="user_comment">${comment_list[j]['comment']}</p>
+                                        </div>
+                                    </div>`
 
-                                                                            </div>
-                                                                        </div>
-                                                                        </div>
-                                                                    </article>
-                                                                </div>`;
                         comment_temp = comment_temp + temp;
                     }
                     let time_post = new Date(post["date"])
                     let time_before = time2str(time_post)
-                    let html_temp = `<section class="box" id="${post["_id"]}">
-                                        <article class="media">
-                                            <div class="media-left">
-                                                <a class="image is-64x64" href="/user/${post['username']}">
-                                                    <strong class="is-sparta"
-                                                style="font-family: 'Stylish', sans-serif;font-size: xxx-large;"><i
-                                                style="color:gray"
-                                                class="fa fa-user"
-                                                aria-hidden="true"></i></strong>
-                                                </a>
-                                            </div>
-                                            <div class="media-content">
-                                                <div class="content">
-                                                    <p>
-                                                        <strong>${post['profile_name']}</strong> <small>@${post['username']}</small> <small>${time_before}</small>
-                                                        <br>
-                                                        ${post['text']}
-                                                    </p>
+                    let html_temp = `<div class="feed_frame" id="${post['_id']}">
+                            <article class="feed">
+                                <div class="media user_info">
+                                    <figure class="image user_img">
+                                        <img src="/static/${post['profile_placeholder']}" alt="Image">
+                                    </figure>
+                                    <div class="text_area">
+                                        <p class="user_name">
+                                            <strong>${post['profile_name']}</strong> 
+                                            <small style="font-size: xx-small">@${post['username']}</small>
+                                        </p>
+                                        <p class="feed_info">
+                                            <span class="time">${time_before}</span>
+                                            <span class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
+                                        </p>
 
-                                                </div>
-                                                <div class="image_list">
-                                                    ${image_temp}
-                                                </div>
-                                                <nav class="level is-mobile">
-                                                    <div class="level-right">
-                                                        <a class="level-item is-sparta" aria-label="comment" onclick="toggle_comment('${post['_id']}')">
-                                                            <span class="icon is-small"><i style="color: blue"  class="fa fa-comment" aria-hidden="true"></i></span>&nbsp;<span style="color: blue"  class="comment-num">${num2str(post['count_comment'])}</span>
-                                                        </a>
-                                                        <a class="level-item is-sparta" aria-label="heart" onclick="toggle_like('${post['_id']}', 'heart')">
-                                                            <span class="icon is-small"><i class='fa ${class_heart}'
-                                                                                           aria-hidden="true"></i></span>&nbsp;<span class="like-num">${num2str(post['count_heart'])}</span>
-                                                        </a>
-                                                    </div>
-                                                </nav>
+                                    </div>
+                                </div>
+                                <div class="like_btn_area">
+                                    <a class="level-item is-sparta like_btn" aria-label="heart" onclick="toggle_like('${post['_id']}', 'heart')">
+                                        <strong class="is-sparta">
+                                            <i style="color:crimson" class="fa ${class_heart}"
+                                               aria-hidden="true"></i></strong>
+                                    </a>
+                                </div>
+                                <div class="feed_detail">
+                                    <p class="detail has_more">
+                                        <span class="txt">${post["text"]}</span>
+                                        <button class="more_btn">
+                                            더보기
+                                        </button>
+                                    </p>
 
-                                            </div>
-
-                                        </article>
-                                        <div class="modal" id="modal-comment">
-                                             <div class="modal-background" onclick="toggle_comment('${post['_id']}')"></div>
-                                                <div class="modal-content">
-                                                    <div class="box">
-                                                        ${comment_temp}
-                                                        <article class="media">
-                                                            <div class="media-content" style="display: flex; justify-content: center; align-items: center">
-                                                                <div style=" margin:0px; width: 60%; padding: 0px" class="${post['_id']}" >
-                                                                    <input style=" width: 100%; height:40px; border: 0px; box-shadow: 3px 3px 10px #ccc;"  type="text" placeholder="댓글">
-                                                                </div>
-                                                                <nav class="level is-mobile" >
-
-                                                                    <div class="level-right">
-                                                                        <div class="level-item">
-                                                                            <a class="button is-sparta" onclick="comment('${post['_id']}')">댓글달기</a>
-                                                                        </div>
-                                                                        <div class="level-item">
-                                                                            <a class="button is-sparta is-outlined"
-                                                                               onclick="toggle_comment('${post['_id']}')">취소</a>
-                                                                        </div>
-                                                                    </div>
-                                                                </nav>
-                                                            </div>
-                                                        </article>
-                                                    </div>
-                                                </div>
-
-                                                <button class="modal-close is-large" aria-label="close"
-                            onclick="toggle_comment('${post['_id']}')"></button>
-                                        </div>
-                                    </section>`
+                                    <div class="img_group">
+                                        ${image_temp}                             
+                                    </div>
+                                </div>
+                            </article>
+                            <div class="feed_comment">
+                                <div class="comment_group">
+                                    ${comment_temp}
+                                </div>
+                                <div class="input_wrap">
+                                    <div class="input_area gray_type is_flex">
+                                        <label class="${post['_id']}">
+                                            <input type="text" placeholder="댓글을 입력하세요" maxlength="100">
+                                        </label>
+                                        <button type="submit" onclick="comment('${post['_id']}')">
+                                            입력
+                                        </button>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>`
                     $("#post-box").append(html_temp)
                 }
             }
@@ -222,6 +198,7 @@ function toggle_like(post_id, type) {
     let token = $.cookie('mytoken');
     if (token !== undefined) {
         let $a_like = $(`#${post_id} a[aria-label='heart']`)
+        console.log($a_like)
         let $i_like = $a_like.find("i")
         if ($i_like.hasClass("fa-heart")) {
             $.ajax({
@@ -233,9 +210,10 @@ function toggle_like(post_id, type) {
                     action_give: "unlike"
                 },
                 success: function (response) {
-                    console.log("unlike")
+                    console.log(response["count"])
                     $i_like.addClass("fa-heart-o").removeClass("fa-heart")
-                    $a_like.find("span.like-num").text(num2str(response["count"]))
+                    $(`#${post_id} .like_count`).text("좋아요 "+num2str(response["count"]))
+                    $a_like.find("span.like_count").text(num2str(response["count"]))
                 }
             })
         } else {
@@ -248,9 +226,10 @@ function toggle_like(post_id, type) {
                     action_give: "like"
                 },
                 success: function (response) {
-                    console.log("like")
+                    console.log(response["count"])
                     $i_like.addClass("fa-heart").removeClass("fa-heart-o")
-                    $a_like.find("span.like-num").text(num2str(response["count"]))
+                    $(`#${post_id} .like_count`).text("좋아요 "+num2str(response["count"]))
+                    $a_like.find("span.like_count").text(num2str(response["count"]))
                 }
             })
 

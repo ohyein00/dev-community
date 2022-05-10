@@ -39,7 +39,7 @@ def main():
 def write():
     return render_template("write.html")
 @app.route('/list')
-def list():
+def lists():
     return render_template("list.html")
 
 @app.route('/read', methods=['GET'])
@@ -100,7 +100,7 @@ def sign_up():
         "password": password_hash,
         "name": name_receive,
         "nickname": nickname_receive,
-        "img": "profile_pics/profile_placeholer.png",
+        "img": "profile_pics/profile_placeholder.png",
         "text": ""
     }
     db.users.insert_one(doc)
@@ -159,6 +159,7 @@ def posting():
         db.post_data.insert_one({
             "username": user_info['username'],
             "profile_name": user_info["nickname"],
+            "profile_placeholder": user_info["img"],
             'date': date_receive,
             'text': text_receive,
             'hash_tags': hash_tags,
@@ -195,22 +196,20 @@ def comment_list():
 
 @app.route("/get_posts", methods=['GET'])
 def get_posts():
-
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         posts = list(db.post_data.find({}).sort("date", -1).limit(20))
-
 
         for post in posts:
             post["_id"] = str(post["_id"])
             post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
             post["heart_by_me"] = bool(
                 db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": payload["id"]}))
-            img_ids = post['img_ids']
+
             image = []
-            if len(img_ids) > 0:
-                for img_id in img_ids:
+            if len(post['img_ids']) > 0:
+                for img_id in post['img_ids']:
                     image.append(get_img_file(ObjectId(img_id)))
             post["s3_image_list"] =image
             post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
@@ -226,7 +225,6 @@ def get_posts():
 @app.route("/get_guest_posts", methods=['GET'])
 def get_guest_posts():
     posts = list(db.post_data.find({}).sort("date", -1).limit(20))
-
     for post in posts:
         post["_id"] = str(post["_id"])
         post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
@@ -267,6 +265,7 @@ def update_like():
         else:
             db.likes.delete_one(doc)
         count = db.likes.count_documents({"post_id": post_id_receive, "type": type_receive})
+        print(count)
         return jsonify({"result": "success", 'msg': 'updated', "count": count})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
