@@ -36,6 +36,9 @@ def main():
 @app.route('/write')
 def write():
     return render_template("write.html")
+@app.route('/list')
+def list():
+    return render_template("list.html")
 
 @app.route('/read', methods=['GET'])
 def read():
