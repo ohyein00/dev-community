@@ -23,7 +23,7 @@ body {
 
 #contents {
     height: 100%;
-    background: #fff;
+    background: ghostwhite;
     overflow: auto;
 }
 
@@ -72,9 +72,7 @@ main {
     margin-top: 90px;
 }
 
-#contents {
-    background-color: beige;
-}
+
 
 .input-group {
     display: flex;
@@ -135,6 +133,7 @@ body {
 .is-sparta {
     color: #e8344e !important;
 }
+
 
 .button.is-sparta {
     background-color: #e8344e;
