@@ -5,10 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-          crossorigin="anonymous">
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
 
     <!-- JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -18,10 +16,10 @@
 
     <!-- 구글폰트 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <link href='{{ url_for("static", filename="css/reset.css") }}' rel="stylesheet">
     <link href='{{ url_for("static", filename="css/index.css") }}' rel="stylesheet">
+    <link href='{{ url_for("static", filename="css/ui.css") }}' rel="stylesheet">
     <script src='{{ url_for("static", filename="js/index.js") }}'></script>
     <title>Devom - 개발자 커뮤니티</title>
 </head>
@@ -31,12 +29,58 @@
     <div id="container">
         <div id="contents">
             <header>
-                <h1 class="logo">{{name}}</h1>
-                <nav>GNB</nav>
+                <h1 class="logo">{{ name }}</h1>
             </header>
             <main>
-                <section class="list_sec">
-                    리스트
+                <section class="feed_sec">
+                    <div class="feed_group">
+                        <div class="box feed_frame">
+                            <article class="feed">
+                                <div class="media user_info">
+                                        <figure class="image user_profile">
+                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                                        </figure>
+                                        <div class="text_area">
+                                            <p class="user_name">
+                                                John Smith
+                                            </p>
+                                            <p class="date">1시간</p>
+                                        </div>
+                                </div>
+                                <div class="feed_detail">
+                                    <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur
+                                    sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
+                                    </p>
+                                    <div class="img_group">
+                                        <div class="img_frame">
+                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                                        </div>
+                                        <div class="img_frame">
+                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                                        </div>
+                                        <div class="img_frame">
+                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                            <div class="feed_comment">
+                                <div class="comment_list">
+                                    <div class="comment">
+                                        <div class="user_img">
+                                        <figure>
+                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                                        </figure>
+                                        </div>
+                                        <div class="detail">
+                                            <p class="user_name"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </section>
             </main>
         </div>

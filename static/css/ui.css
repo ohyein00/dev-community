@@ -1,0 +1,49 @@
+
+/* feed_frame style */
+.user_profile img{
+   border-radius: 100%;
+   width:40px;
+   height:40px;
+}
+.user_info{
+   align-items: center;
+}
+.user_img > figure{
+   margin-right:15px;
+}
+.user_info{
+   font-size:14px;
+}
+.user_info .user_name{
+   margin-bottom:5px;
+}
+
+.feed_frame{
+   margin:0 auto;
+   max-width:680px;
+}
+.feed .feed_detail{
+   margin-top:20px;
+}
+.feed_detail .img_group{
+   display:flex;
+   flex-wrap:wrap;
+   margin-top:15px;
+}
+.feed_detail .img_group .img_frame{
+   display:flex;
+   width:50%;
+   padding:5px;
+}
+.feed_detail .img_group .img_frame:nth-child(3):last-child,
+.feed_detail .img_group .img_frame:nth-child(1):last-child{
+   width:100%;
+   max-height:310px;
+   overflow:hidden;
+}
+.feed_detail .img_group .img_frame img{
+   width:100%;
+   object-fit: cover;
+
+}
+
