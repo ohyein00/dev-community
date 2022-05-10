@@ -47,37 +47,6 @@ function comment(id) {
     })
 }
 
-function post() {
-    let comment = $("#textarea-post").val()
-    let today = new Date().toISOString()
-    $.ajax({
-        type: "POST",
-        url: "/posting",
-        data: {
-            comment_give: comment,
-            date_give: today
-        },
-        success: function (response) {
-            $("#modal-post").removeClass("is-active")
-            window.location.reload()
-        }
-    })
-}
-
-function toggle_comment(id) {
-    let token = $.cookie('mytoken');
-    if (token !== undefined) {
-        if ($(`#${id} > .modal`).hasClass("is-active")) {
-            $(`#${id} > .modal`).removeClass("is-active");
-        } else {
-            $(`#${id} > .modal`).addClass("is-active");
-        }
-    }else {
-        alert("로그인 후에 사용하실 수 있습니다.")
-    }
-
-
-}
 
 function get_posts() {
     $("#post-box").empty()
