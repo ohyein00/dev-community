@@ -30,8 +30,9 @@ function time2str(date) {
 }
 
 function comment(id) {
-    let comment = $("#commnet-post").val()
+    let comment = $(`.${id} > input`).val();
     let today = new Date().toISOString()
+    console.log(comment);
     $.ajax({
         type: "POST",
         url: "/comment_list",
@@ -43,6 +44,23 @@ function comment(id) {
         success: function (response) {
             $("#modal-post").removeClass("is-active")
             window.location.reload()
+        }
+    })
+}
+
+function post() {
+    let comment = $("#textarea-post").val()
+    let today = new Date().toISOString()
+    $.ajax({
+        type: "POST",
+        url: "/posting",
+        data: {
+            comment_give: comment,
+            date_give: today
+        },
+        success: function (response) {
+            $("#modal-post").removeClass("is-active")
+						window.location.reload()
         }
     })
 }
@@ -96,7 +114,7 @@ function get_posts() {
                                                                         <div>
                                                                             <div class="content">
                                                                                 <p>
-                                                                                    <strong>${comment_list[j]['username']}</strong> <small>${time_before}</small>
+                                                                                    <strong>${comment_list[j]['profile_name']}</strong> <small>@${comment_list[j]['username']}</small> <small>${time_before}</small>
                                                                                     <br>
                                                                                     ${comment_list[j]['comment']}
                                                                                 </p>
@@ -154,11 +172,10 @@ function get_posts() {
                                                     <div class="box">
                                                         ${comment_temp}
                                                         <article class="media">
-
-                                                            <div class="media-content">
-
-
-                                                                <input style=" margin-left:10px; width: 60%; height:50px; border: 0px; box-shadow: 3px 3px 10px #ccc;" id="commnet-post" type="text" placeholder="댓글">
+                                                            <div class="media-content" style="display: flex; justify-content: center; align-items: center">
+                                                                <div style=" margin:0px; width: 60%; padding: 0px" class="${post['_id']}" >
+                                                                    <input style=" width: 100%; height:40px; border: 0px; box-shadow: 3px 3px 10px #ccc;"  type="text" placeholder="댓글">
+                                                                </div>
                                                                 <nav class="level is-mobile" >
 
                                                                     <div class="level-right">
