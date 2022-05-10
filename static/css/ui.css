@@ -75,7 +75,14 @@
     flex-wrap: wrap;
     margin: 15px -5px 0;
 }
-
+.hash_group{
+    display: flex;
+    flex-wrap: wrap;
+    margin: 15px -5px 0;
+}
+.hash_item{
+    margin-left: 15px;
+}
 .feed_detail .img_group .img_frame {
     display: flex;
     width: 50%;

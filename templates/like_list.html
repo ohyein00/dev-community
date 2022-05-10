@@ -9,6 +9,17 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"></script>
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <!-- Font Awesome CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
     <!-- JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -24,26 +35,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <link href='{{ url_for("static", filename="css/reset.css") }}' rel="stylesheet">
     <link href='{{ url_for("static", filename="css/index.css") }}' rel="stylesheet">
+    <link href='{{ url_for("static", filename="css/ui.css") }}' rel="stylesheet">
     <script src='{{ url_for("static", filename="js/index.js") }}'></script>
     <script src='{{ url_for("static", filename="js/like.js") }}'></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bulma CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
-    <!-- Font Awesome CSS -->
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <!-- JS -->
-
     <title>Devom - 개발자 커뮤니티 | 좋아요리스트</title>
     <script>
-        let token = $.cookie('mytoken');
+         let token = $.cookie('mytoken');
         if (token !== undefined) {
 
         }else {
             alert("로그인 후에 사용하실 수 있습니다.");
             window.location.href="/";
         }
+        $(document).ready(function () {
+            get_posts_like();
+
+        })
+
     </script>
 </head>
 
@@ -65,9 +75,11 @@
                                     style="font-family: 'Stylish', sans-serif;font-size: large;"><i style="color:black"  class="fa fa-list" aria-hidden="true"></i></strong>
                             <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">글목록</small>
                         </a>
-                        <a class="navbar-item" href="/post_content">
+                        <a class="navbar-item" href="/write">
                             <strong class="is-sparta"
-                                    style="font-family: 'Stylish', sans-serif;font-size: large;"><i style="color:darkblue"  class="fa fa-pencil-square-o" aria-hidden="true"></i></strong>
+                                    style="font-family: 'Stylish', sans-serif;font-size: large;"><i
+                                    style="color:darkblue" class="fa fa-pencil-square-o"
+                                    aria-hidden="true"></i></strong>
                             <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">글작성</small>
                         </a>
                         <a class="navbar-item" href="/like_list">
@@ -92,7 +104,9 @@
             </header>
             <main>
                 <section class="list_sec">
-                    리스트
+                    <div id="post-box" class="container">
+
+                    </div>
                 </section>
             </main>
         </div>
