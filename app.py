@@ -1,11 +1,21 @@
 import codecs
 import re
-
-from flask import Flask, render_template, jsonify, request
-from pymongo import MongoClient
 import gridfs
 
+from pymongo import MongoClient
+import jwt
+import datetime
+import hashlib
+from flask import Flask, render_template, jsonify, request, redirect, url_for
+from werkzeug.utils import secure_filename
+from datetime import datetime, timedelta
+
+
 app = Flask(__name__)
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config['UPLOAD_FOLDER'] = "./static/profile_pics"
+
+SECRET_KEY = 'SPARTA'
 
 client = MongoClient('mongodb+srv://qwerty35043:qwerty35043@cluster0.wnazh.mongodb.net/Cluster0?retryWrites=true&w=majority')
 db = client.db
@@ -26,35 +36,36 @@ def main():
 def write():
     return render_template("write.html")
 
-@app.route('/write/save', methods=['POST'])
-def write_save():
-    text_receive = request.form['text']
+@app.route('/posting', methods=['POST'])
+def posting():
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
 
-    pattern = '#([0-9a-zA-Z가-힣]*)'
-    find_hash = re.compile(pattern)
+        text_receive = request.form['text']
+        date_receive = request.form['date']
 
-    hash_tags = find_hash.findall(text_receive)
+        pattern = '#([0-9a-zA-Z가-힣]*)'
+        find_hash = re.compile(pattern)
+        hash_tags = find_hash.findall(text_receive)
 
-    img_ids = []
-    if request.files is not None:
-        print(request.files)
-        for file in request.files:
-            img_id = fs.put(request.files[file])
-            img_ids.append(img_id)
+        img_ids = []
+        if request.files is not None:
+            for file in request.files:
+                img_id = fs.put(request.files[file])
+                img_ids.append(img_id)
 
-    count = db.count.find_one({"name": "count"})
-    next_count = count['count'] + 1
+        db.tmp.insert_one({
+            'date': date_receive,
+            'text': text_receive,
+            'hash_tags': hash_tags,
+            'img_ids': img_ids
+        })
 
-    db.count.update_one({'name':'count'},{'$set':{'count':next_count}})
-
-    db.tmp.insert_one({
-        'id': next_count,
-        'text': text_receive,
-        'hash_tags': hash_tags,
-        'img_ids': img_ids
-    })
-
-    return jsonify({'result': 'success'})
+        return jsonify({"result": "success", 'msg': '포스팅 성공'})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home"))
 
 @app.route('/read', methods=['GET'])
 def read():

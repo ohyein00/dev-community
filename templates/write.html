@@ -61,8 +61,9 @@
             });
         })
 
-        const upload = () => {
+        function post() {
             const textArea = $('#writeform > textarea');
+            let today = new Date().toISOString();
 
             if (textArea.val().length == 0) {
                 textArea.focus();
@@ -71,6 +72,7 @@
 
             const form = new FormData();
             form.append("text", textArea.val());
+            form.append("date", today);
 
             if (images.length) {
                 let i = 0;
@@ -78,24 +80,20 @@
                     form.append(`file${i}`, file);
                     i++;
                 }
-                form.append("fileCount", i + "");
-            }
-
-            for (const key of form.keys()) {
-                console.log(key);
             }
 
             $.ajax({
                 type: "POST",
-                url: "/write/save",
+                url: "/posting",
                 contentType: false,
                 processData: false,
                 data: form,
-                success: function (res) {
-                    console.log(res)
+                success: function (response) {
+                    window.location.href = '/';
                 }
-            });
+            })
         }
+
     </script>
 </head>
 <body>
@@ -130,7 +128,7 @@
         </div>
 
         <div>
-            <button onclick="upload()">게시</button>
+            <button onclick="post()">게시</button>
         </div>
 
     </div>
