@@ -1,49 +1,212 @@
-
 /* feed_frame style */
-.user_profile img{
-   border-radius: 100%;
-   width:40px;
-   height:40px;
-}
-.user_info{
-   align-items: center;
-}
-.user_img > figure{
-   margin-right:15px;
-}
-.user_info{
-   font-size:14px;
-}
-.user_info .user_name{
-   margin-bottom:5px;
+.user_img {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    overflow: hidden;
+    margin-right: 10px;
 }
 
-.feed_frame{
-   margin:0 auto;
-   max-width:680px;
+.user_img img {
+    width: 100%;
+    height: 100%;
 }
-.feed .feed_detail{
-   margin-top:20px;
+
+.user_info {
+    align-items: center;
 }
-.feed_detail .img_group{
-   display:flex;
-   flex-wrap:wrap;
-   margin-top:15px;
+
+.user_img > figure {
+    margin-right: 15px;
 }
-.feed_detail .img_group .img_frame{
-   display:flex;
-   width:50%;
-   padding:5px;
+
+.user_info {
+    font-size: 14px;
 }
+
+.user_info .user_name {
+    margin-bottom: 5px;
+    font-weight:500;
+}
+
+.feed_frame {
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 2%);
+    color: #4a4a4a;
+    display: block;
+    padding: 1.25rem;
+    margin: 0 auto;
+    max-width: 680px;
+}
+.feed_frame + .feed_frame{
+    margin-top:50px;
+}
+.feed{
+    position:relative;
+    width:100%;
+}
+.feed .feed_detail {
+    margin-top: 20px;
+    line-height: 1.4;
+}
+.feed_detail .detail{
+    font-size:14px;
+
+}
+.feed_detail .detail.has_more .txt::after{
+    content:'...';
+}
+.feed_detail .detail .more_btn{
+    display:inline;
+    font-size:12px;
+    font-weight:500;
+    padding:0 0 0 5px;
+    text-decoration: underline;
+    outline:none;
+    border:none;
+}
+
+.feed_detail .detail .more_btn:focus{
+    outline:none;
+}
+.feed_detail .img_group {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 15px -5px 0;
+}
+
+.feed_detail .img_group .img_frame {
+    display: flex;
+    width: 50%;
+    padding: 5px;
+}
+
 .feed_detail .img_group .img_frame:nth-child(3):last-child,
-.feed_detail .img_group .img_frame:nth-child(1):last-child{
-   width:100%;
-   max-height:310px;
-   overflow:hidden;
-}
-.feed_detail .img_group .img_frame img{
-   width:100%;
-   object-fit: cover;
-
+.feed_detail .img_group .img_frame:nth-child(1):last-child {
+    width: 100%;
+    max-height: 310px;
+    overflow: hidden;
 }
 
+.feed_detail .img_group .img_frame img {
+    width: 100%;
+    object-fit: cover;
+}
+
+
+/* feed_comment */
+.feed_comment {
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #dcdcdc;
+}
+
+.feed_comment .comment_frame {
+    display: flex;
+    align-items: center;
+}
+
+.feed_comment .comment_frame .user_img {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+}
+
+.feed_comment .comment_frame .user_name {
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.feed_info > span{
+    font-size:12px;
+    color: #666
+}
+.feed_comment .comment_frame .user_comment {
+    font-size: 14px;
+}
+
+/* heart */
+.like_btn_area{
+    position:absolute;
+    right:0;
+    top:-5px;
+}
+.like_btn_area .like_count{
+    position:absolute;
+    bottom:0%;
+    right:50%;
+    transform:translate(0%,75%);
+    background:#efefef;
+    font-size:12px;
+    padding:4px 8px;
+    font-weight:500;
+    color:#444;
+    border-radius: 10px;
+}
+.like_btn {
+    font-size:20px;
+    padding:10px;
+    border:1px solid #dcdcdc;
+    border-radius: 100%;
+}
+/*left_bar*/
+.contour.left::before{
+    content:'';
+    display:inline-block;
+    margin:0 5px 0 2px;
+    width:1px;
+    height:10px;
+    background:#ccc;
+}
+.feed_comment .input_wrap{
+    margin-top:20px;
+}
+.input_area.gray_type{
+    width:100%;
+}
+.input_area label{
+    width:100%;
+}
+.input_area input{
+    width:100%;
+    border:none;
+    outline:none;
+    padding:5px 20px;
+    height:42px;
+    box-sizing: border-box;
+    background:#efefef;
+    border-radius: 50px;
+    font-size:14px;
+}
+.input_area input::placeholder{
+    color:#666;
+}
+.input_area input:focus{
+    outline: none;
+}
+.input_area.is_flex{
+    justify-content: space-between;
+    align-items: center;
+}
+.input_area button{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    height:42px;
+    width:100px;
+    border:none;
+    background:#333;
+    color:#fff;
+    margin-left:15px;
+    font-size:14px;
+    border-radius: 50px;
+    font-weight:500
+}
+/*is_flex*/
+.is_flex{
+    display:flex;
+}

@@ -13,7 +13,7 @@ def main():
 
 @app.route("/list", methods=["GET"])
 def web_mars_get():
-    order_list = list(db.mars.find({},{'_id':False}))
+    order_list = list(db.tmp.find({},{'_id':False}))
     print(order_list)
     return jsonify({'data':order_list})
 
