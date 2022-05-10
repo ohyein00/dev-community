@@ -43,15 +43,17 @@
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <!-- JS -->
 
-    <title>Devom - 개발자 커뮤니티</title>
+    <title>Devom - 개발자 커뮤니티{{log}}</title>
     <script>
         $(document).ready(function () {
             get_posts();
             let token = $.cookie('mytoken');
             if (token !== undefined) {
                 $(".login > small").text("로그아웃");
+                $('.login').prop('href', "/logout")
             } else {
                 $(".login > small").text("로그인");
+                $('.login').prop('href', "/login")
             }
         })
     </script>
@@ -117,7 +119,6 @@
 
                     </div>
                 </section>
-
             </main>
         </div>
     </div>

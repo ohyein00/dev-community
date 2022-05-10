@@ -60,25 +60,39 @@ function post() {
         },
         success: function (response) {
             $("#modal-post").removeClass("is-active")
-						window.location.reload()
+            window.location.reload()
         }
     })
 }
 
 function toggle_comment(id) {
-    if ($(`#${id} > .modal`).hasClass("is-active")) {
-        $(`#${id} > .modal`).removeClass("is-active");
-    } else {
-        $(`#${id} > .modal`).addClass("is-active");
+    let token = $.cookie('mytoken');
+    if (token !== undefined) {
+        if ($(`#${id} > .modal`).hasClass("is-active")) {
+            $(`#${id} > .modal`).removeClass("is-active");
+        } else {
+            $(`#${id} > .modal`).addClass("is-active");
+        }
+    }else {
+        alert("로그인 후에 사용하실 수 있습니다.")
     }
+
 
 }
 
 function get_posts() {
     $("#post-box").empty()
+    let host_url = "";
+    let token = $.cookie('mytoken');
+    if (token !== undefined) {
+        host_url = "get_posts";
+    } else {
+        host_url = "get_guest_posts";
+    }
+
     $.ajax({
         type: "GET",
-        url: "/get_posts",
+        url: `/${host_url}`,
         data: {},
         success: function (response) {
             if (response["result"] == "success") {
@@ -205,39 +219,45 @@ function get_posts() {
 }
 
 function toggle_like(post_id, type) {
-    console.log(post_id, type)
-    let $a_like = $(`#${post_id} a[aria-label='heart']`)
-    let $i_like = $a_like.find("i")
-    if ($i_like.hasClass("fa-heart")) {
-        $.ajax({
-            type: "POST",
-            url: "/update_like",
-            data: {
-                post_id_give: post_id,
-                type_give: type,
-                action_give: "unlike"
-            },
-            success: function (response) {
-                console.log("unlike")
-                $i_like.addClass("fa-heart-o").removeClass("fa-heart")
-                $a_like.find("span.like-num").text(num2str(response["count"]))
-            }
-        })
-    } else {
-        $.ajax({
-            type: "POST",
-            url: "/update_like",
-            data: {
-                post_id_give: post_id,
-                type_give: type,
-                action_give: "like"
-            },
-            success: function (response) {
-                console.log("like")
-                $i_like.addClass("fa-heart").removeClass("fa-heart-o")
-                $a_like.find("span.like-num").text(num2str(response["count"]))
-            }
-        })
+    let token = $.cookie('mytoken');
+    if (token !== undefined) {
+        let $a_like = $(`#${post_id} a[aria-label='heart']`)
+        let $i_like = $a_like.find("i")
+        if ($i_like.hasClass("fa-heart")) {
+            $.ajax({
+                type: "POST",
+                url: "/update_like",
+                data: {
+                    post_id_give: post_id,
+                    type_give: type,
+                    action_give: "unlike"
+                },
+                success: function (response) {
+                    console.log("unlike")
+                    $i_like.addClass("fa-heart-o").removeClass("fa-heart")
+                    $a_like.find("span.like-num").text(num2str(response["count"]))
+                }
+            })
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "/update_like",
+                data: {
+                    post_id_give: post_id,
+                    type_give: type,
+                    action_give: "like"
+                },
+                success: function (response) {
+                    console.log("like")
+                    $i_like.addClass("fa-heart").removeClass("fa-heart-o")
+                    $a_like.find("span.like-num").text(num2str(response["count"]))
+                }
+            })
 
+        }
+    } else {
+        alert("로그인 후에 사용하실 수 있습니다.")
     }
+
+
 }

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, redirect, url_for
+from flask import Flask, render_template, jsonify, request, redirect, url_for, session
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 
@@ -143,6 +143,7 @@ def comment_list():
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
 
+
 @app.route("/get_posts", methods=['GET'])
 def get_posts():
     token_receive = request.cookies.get('mytoken')
@@ -169,6 +170,26 @@ def get_posts():
         return redirect(url_for("home"))
 
 
+@app.route("/get_guest_posts", methods=['GET'])
+def get_guest_posts():
+    posts = list(db.posts.find({}).sort("date", -1).limit(20))
+    for post in posts:
+        post["_id"] = str(post["_id"])
+        post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
+        post["heart_by_me"] = bool(
+            db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": "Guest"}))
+        post["s3_image_list"] = ["https://devom-image.s3.ap-northeast-2.amazonaws.com/img/test/01.jpg",
+                                 "https://devom-image.s3.ap-northeast-2.amazonaws.com/img/test/02.jpg",
+                                 "https://devom-image.s3.ap-northeast-2.amazonaws.com/img/test/01.jpg",
+                                 "https://devom-image.s3.ap-northeast-2.amazonaws.com/img/test/02.jpg"]
+        post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
+        post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+        for comment in post["comment_list"]:
+            comment["_id"] = str(comment["_id"])
+
+    # 포스팅 목록 받아오기
+    return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
+
 
 @app.route('/update_like', methods=['POST'])
 def update_like():
@@ -193,6 +214,10 @@ def update_like():
         return jsonify({"result": "success", 'msg': 'updated', "count": count})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    return redirect("/")
 
 
 if __name__ == '__main__':
