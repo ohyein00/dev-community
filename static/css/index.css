@@ -162,4 +162,21 @@ input::-webkit-calendar-picker-indicator {
     height:100%;
 }
 
+.dev_image{
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+}
 
+.level{
+     float: right;
+    margin: 10px;
+}
+.image_list{
+    display: flex;
+}
+.image_list > li{
+    list-style: none;
+    margin: 5px;
+
+}
