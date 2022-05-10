@@ -1,16 +1,20 @@
-from pymongo import MongoClient
 from flask import Flask, render_template, jsonify, request, redirect, url_for
-import boto3
-from datetime import datetime
+from pymongo import MongoClient
+from datetime import datetime, timedelta
 
+import certifi
+import hashlib
+import jwt
+import datetime
+
+
+ca = certifi.where()
 client = MongoClient('3.34.47.86', 27017, username="test", password="test")
-db = client.devom
+db = client.dbsparta
 
 app = Flask(__name__)
 
-ACCESS_KEY_ID = "AKIARGAT3YC473OUDAXX"
-ACCESS_SECRET_KEY = "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"
-BUCKET_NAME = "devom-image"
+SECRET_KEY = 'SPARTA'
 
 
 @app.route('/')
@@ -107,18 +111,6 @@ def update_like():
     return jsonify({"result": "success", 'msg': 'updated', "count": count})
 
 
-def handle_upload_img(filepath,filenames):  # f = 파일명
-    try:
-        s3_client = boto3.client(
-            's3',
-            aws_access_key_id=ACCESS_KEY_ID,
-            aws_secret_access_key=ACCESS_SECRET_KEY
-        )
-        response = s3_client.upload_file(
-            filepath, BUCKET_NAME, 'img/'+filenames+'.jpg',ExtraArgs={'ContentType': "image/jpg"},)
-    except Exception as e:
-        return e
-    return True
 
 
 
