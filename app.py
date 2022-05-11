@@ -23,42 +23,55 @@ app.config['UPLOAD_FOLDER'] = "./static/profile_pics"
 SECRET_KEY = 'SPARTA'
 fs = gridfs.GridFS(db)
 
+
 def get_img_file(img_id):
     img_binary = fs.get(img_id)
     base64_img = codecs.encode(img_binary.read(), 'base64')
     decoded_img = base64_img.decode('utf-8')
     return decoded_img
 
+#유저 아이디 체크. 비로그인시 False값 출력
+def check_user_id():
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        return payload["id"]
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return False
 
 @app.route('/')
 def main():
-    myname = "Devom"
-    return render_template("index.html", name=myname)
+    # 메인에서 바로 피드 출력
+    posts = list(db.post_data.find({}).sort("date", -1).limit(20))
+    user_id = check_user_id()
+    for post in posts:
+        post["_id"] = str(post["_id"])
+        post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
+        image = []
+        if len(post['img_ids']) > 0:
+            for img_id in post['img_ids']:
+                image.append(get_img_file(ObjectId(img_id)))
+        post["s3_image_list"] = image
+        post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
+        post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+        #좋아요 유저체크 분기
+        if bool(user_id) :
+            post["heart_by_me"] = bool(
+                db.likes.find_one({"post_id": post["_id"],"username": user_id}))
+        else:
+            post["heart_by_me"] = False
+        for comment in post["comment_list"]:
+            comment["_id"] = str(comment["_id"])
+    return render_template('index.html', posts=posts, user_id=user_id)
 
 @app.route('/write')
 def write():
     return render_template("write.html")
+
+
 @app.route('/list')
 def lists():
     return render_template("list.html")
-
-@app.route('/read', methods=['GET'])
-def read():
-    return render_template("read.html")
-
-@app.route('/read_result', methods=['GET'])
-def read_result():
-    contents = list(db.tmp.find({}))
-    result = []
-    for content in contents:
-        img_ids = content['img_ids']
-        results = []
-        if len(img_ids) > 0:
-            for img_id in img_ids:
-                results.append(get_img_file(img_id))
-        result.append(results)
-
-    return jsonify({'result': 'success', 'files': result})
 
 @app.route('/login')
 def login():
@@ -149,7 +162,7 @@ def posting():
         pattern = '#([0-9a-zA-Z가-힣]*)'
         find_hash = re.compile(pattern)
         hash_tags = find_hash.findall(text_receive)
-        text_receive =find_hash.sub("", text_receive)
+        text_receive = find_hash.sub("", text_receive)
         img_ids = []
         if request.files is not None:
             for file in request.files:
@@ -194,33 +207,6 @@ def comment_list():
         return redirect(url_for("home"))
 
 
-@app.route("/get_posts", methods=['GET'])
-def get_posts():
-    token_receive = request.cookies.get('mytoken')
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        posts = list(db.post_data.find({}).sort("date", -1).limit(20))
-
-        for post in posts:
-            post["_id"] = str(post["_id"])
-            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
-            post["heart_by_me"] = bool(
-                db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": payload["id"]}))
-
-            image = []
-            if len(post['img_ids']) > 0:
-                for img_id in post['img_ids']:
-                    image.append(get_img_file(ObjectId(img_id)))
-            post["s3_image_list"] =image
-            post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
-            post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
-            for comment in post["comment_list"]:
-                comment["_id"] = str(comment["_id"])
-        # 포스팅 목록 받아오기
-        return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
-    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return redirect(url_for("home"))
-
 @app.route("/get_posts_like", methods=['GET'])
 def get_posts_like():
     token_receive = request.cookies.get('mytoken')
@@ -230,15 +216,15 @@ def get_posts_like():
         posts_like = list()
         for post in posts:
             post["_id"] = str(post["_id"])
-            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
+            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
             post["heart_by_me"] = bool(
-                db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": payload["id"]}))
-            if(post["heart_by_me"]):
+                db.likes.find_one({"post_id": post["_id"], "username": payload["id"]}))
+            if (post["heart_by_me"]):
                 image = []
                 if len(post['img_ids']) > 0:
                     for img_id in post['img_ids']:
                         image.append(get_img_file(ObjectId(img_id)))
-                post["s3_image_list"] =image
+                post["s3_image_list"] = image
                 post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
                 post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
                 for comment in post["comment_list"]:
@@ -248,27 +234,6 @@ def get_posts_like():
         return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts_like})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
-
-@app.route("/get_guest_posts", methods=['GET'])
-def get_guest_posts():
-    posts = list(db.post_data.find({}).sort("date", -1).limit(20))
-    for post in posts:
-        post["_id"] = str(post["_id"])
-        post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
-        post["heart_by_me"] = bool(
-            db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": "GUEST"}))
-        img_ids = post['img_ids']
-        image = []
-        if len(img_ids) > 0:
-            for img_id in img_ids:
-                image.append(get_img_file(ObjectId(img_id)))
-        post["s3_image_list"] = image
-        post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
-        post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
-        for comment in post["comment_list"]:
-            comment["_id"] = str(comment["_id"])
-    # 포스팅 목록 받아오기
-    return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
 
 
 @app.route('/update_like', methods=['POST'])
@@ -292,15 +257,15 @@ def update_like():
         else:
             db.likes.delete_one(doc)
         count = db.likes.count_documents({"post_id": post_id_receive, "type": type_receive})
-        print(count)
+
         return jsonify({"result": "success", 'msg': 'updated', "count": count})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
 
+
 @app.route('/logout', methods=['GET'])
 def logout():
     return redirect("/")
-
 
 
 if __name__ == '__main__':

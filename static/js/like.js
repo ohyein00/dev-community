@@ -49,7 +49,6 @@ function comment(id) {
 
 
 function get_posts() {
-    $("#post-box").empty()
     let host_url = "";
     let token = $.cookie('mytoken');
     if (token !== undefined) {
@@ -57,7 +56,6 @@ function get_posts() {
     } else {
         host_url = "get_guest_posts";
     }
-
     $.ajax({
         type: "GET",
         url: `/${host_url}`,
@@ -75,7 +73,6 @@ function get_posts() {
                     let image_temp = ``;
                     let comment_temp = ``;
                     let hash_temp = ``;
-                    console.log(image_list)
                     for (const file of image_list) {
                         let temp = `<div class="img_frame">
                                             <img src="data:image;base64, ${file}"/></li>
@@ -104,7 +101,7 @@ function get_posts() {
                     }
                     for (let j = 0; j < hash_list.length; j++) {
                         let temp = `<div class="hash_item">
-                                            <a><small style="font-size: x-small; color: blue">#${hash_list[j]}</small></a>
+                                            <a><small >#${hash_list[j]}</small></a>
                                         </div>`;
                         hash_temp= hash_temp+temp;
                     }
@@ -186,7 +183,8 @@ function get_posts_like() {
                 let posts = response["posts"]
                 for (let i = 0; i < posts.length; i++) {
                     let post = posts[i]
-                    let class_heart = post['heart_by_me'] ? "fa-heart" : "fa-heart-o"
+                    let class_heart = 'fa-heart-o'
+                    class_heart = post['heart_by_me'] ? "fa-heart" : "fa-heart-o"
                     let image_list = post["s3_image_list"];
                     let comment_list = post["comment_list"];
                     let image_temp = ``;
