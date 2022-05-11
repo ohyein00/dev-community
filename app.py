@@ -4,7 +4,7 @@ import gridfs
 
 import jwt
 import hashlib
-from flask import Flask, render_template, jsonify, request, redirect, url_for
+from flask import Flask, render_template, jsonify, request, redirect, url_for, session
 from bson import ObjectId
 from werkzeug.utils import secure_filename
 
@@ -20,6 +20,7 @@ db = client.dbsparta
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config['UPLOAD_FOLDER'] = "./static/profile_pics"
+app.secret_key = 'SPARTA'
 
 SECRET_KEY = 'SPARTA'
 fs = gridfs.GridFS(db)
@@ -105,7 +106,8 @@ def get_more_txt():
 @app.route('/write')
 def write():
     if len(request.args) > 0:
-        print(request.args)
+        post_id = request.args['post_id']
+        print(post_id)
 
     token_receive = request.cookies.get('mytoken')
     try:
@@ -140,6 +142,7 @@ def sign_in():
             'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)  # 로그인 24시간 유지
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+        session['username'] = username_receive
         return jsonify({'result': 'success', 'token': token})
     # 찾지 못하면
     else:
@@ -531,6 +534,13 @@ def guest_sort():
         posts = sorted(posts, key=lambda post: -post['count_heart'])
     # 포스팅 목록 받아오기
     return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
+
+@app.route("/post_delete", methods=['POST'])
+def post_delete():
+    post_id = request.form['post_id']
+    print(post_id)
+    db.post_data.delete_one({'_id': ObjectId(post_id)})
+    return jsonify({"result": "success"})
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
