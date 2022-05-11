@@ -197,11 +197,16 @@
                         </span>
                     </div>
                 </nav>
-                <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation" style="padding: 0px;">
-                        <div class="input-group">
-                            <input id="search_hash" style="font-size: 12px" type="text" class="form-control" placeholder="검색 키워드를 입력하세요!">
-                            <span class="input-group-btn">
-                                <button onclick="execSearch()" style="width: 30px; height: 30px; padding: 0px;" class="btn btn-secondary" type="button"><i style="margin: 0px;" class="fa fa-search" aria-hidden="true"></i></button>
+                <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation"
+                     style="padding: 0px;">
+                    <div class="input-group">
+                        <input id="search_hash" style="font-size: 12px" type="text" class="form-control"
+                               placeholder="검색 키워드를 입력하세요!">
+                        <span class="input-group-btn">
+                                <button onclick="execSearch()" style="width: 30px; height: 30px; padding: 0px;"
+                                        class="btn btn-secondary" type="button"><i style="margin: 0px;"
+                                                                                   class="fa fa-search"
+                                                                                   aria-hidden="true"></i></button>
                             </span>
                     </div>
                     <div class="navbar-brand" style="padding: 0px; margin-bottom: 0px; margin-top: 0px;">
@@ -315,20 +320,21 @@
                                 <div class="feed_comment">
                                     <div class="comment_group">
                                         {% for comment in post["comment_list"] %}
-                                        <div class="comment_frame" id="{{ comment["_id"] }}">
-                                        <figure class="user_img">
-                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-                                        </figure>
-                                        <div class="comment_detail">
-                                            <p class="user_name">
-                                                <strong>{{ comment["profile_name"] }}</strong>
-                                                <small style="font-size: xx-small">{{ comment["username"] }}</small>
-                                                <small class="time contour left">시간</small>
-                                            </p>
-                                            <p class="user_comment">{{comment["comment"]}}</p>
-                                        </div>
+                                            <div class="comment_frame" id="{{ comment["_id"] }}">
+                                                <figure class="user_img">
+                                                    <img src="https://bulma.io/images/placeholders/128x128.png"
+                                                         alt="Image">
+                                                </figure>
+                                                <div class="comment_detail">
+                                                    <p class="user_name">
+                                                        <strong>{{ comment["profile_name"] }}</strong>
+                                                        <small style="font-size: xx-small">{{ comment["username"] }}</small>
+                                                        <small class="time contour left">시간</small>
+                                                    </p>
+                                                    <p class="user_comment">{{ comment["comment"] }}</p>
+                                                </div>
+                                            </div>
                                         {% endfor %}
-                                    </div>
                                     </div>
                                     {% if user_id %}
                                         <div class="input_wrap">

@@ -9,7 +9,8 @@ from bson import ObjectId
 from werkzeug.utils import secure_filename
 
 from pymongo import MongoClient
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,timezone
+import dateutil
 import certifi
 
 ca = certifi.where()
@@ -47,6 +48,7 @@ def main():
     for post in posts:
         post["_id"] = str(post["_id"])
         post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
+
         image = []
         if len(post['img_ids']) > 0:
             for img_id in post['img_ids']:
@@ -262,7 +264,6 @@ def get_posts():
             posts = list(db.post_data.find({}).sort("date", 1).skip(count).limit(3))
         else:
             posts = list(db.post_data.find({}).sort("date", -1).skip(count).limit(3))
-
 
         for post in posts:
             post["_id"] = str(post["_id"])
