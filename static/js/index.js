@@ -25,7 +25,6 @@ function show_list() {
         url: '/list',
         data: {},
         success: function (response) {
-            console.log(response)
         }
     })
 }
