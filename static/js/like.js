@@ -32,7 +32,6 @@ function time2str(date) {
 function comment(id) {
     let comment = $(`.${id}  input`).val();
     let today = new Date().toISOString()
-    console.log(comment);
     $.ajax({
         type: "POST",
         url: "/comment_list",
@@ -48,8 +47,8 @@ function comment(id) {
 }
 
 
-function get_posts() {
-    $("#post-box").empty()
+function get_posts(count) {
+    let posts_list = new Array();
     let host_url = "";
     let token = $.cookie('mytoken');
     if (token !== undefined) {
@@ -61,7 +60,8 @@ function get_posts() {
     $.ajax({
         type: "GET",
         url: `/${host_url}`,
-        data: {},
+        async: false,
+        data: {count :count},
         success: function (response) {
             if (response["result"] == "success") {
                 let posts = response["posts"]
@@ -71,11 +71,9 @@ function get_posts() {
                     let image_list = post["s3_image_list"];
                     let comment_list = post["comment_list"];
                     let hash_list = post['hash_tags']
-
                     let image_temp = ``;
                     let comment_temp = ``;
                     let hash_temp = ``;
-                    console.log(image_list)
                     for (const file of image_list) {
                         let temp = `<div class="img_frame">
                                             <img src="data:image;base64, ${file}"/></li>
@@ -168,19 +166,23 @@ function get_posts() {
                                 </div>
                             </div>
                         </div>`
-                    $("#post-box").append(html_temp)
+                    posts_list.push(html_temp);
+
                 }
             }
         }
+
     })
+    return posts_list
 }
 
-function get_posts_like() {
-    $("#post-box").empty()
+function get_posts_like(count) {
+    let posts_list = new Array();
     $.ajax({
         type: "GET",
         url: `/get_posts_like`,
-        data: {},
+        async: false,
+        data: {count :count},
         success: function (response) {
             if (response["result"] == "success") {
                 let posts = response["posts"]
@@ -191,7 +193,6 @@ function get_posts_like() {
                     let comment_list = post["comment_list"];
                     let image_temp = ``;
                     let comment_temp = ``;
-                    console.log(comment_list)
                     for (const file of image_list) {
                         let temp = `<div class="img_frame">
                                             <img src="data:image;base64, ${file}"/></li>
@@ -239,7 +240,7 @@ function get_posts_like() {
                                     </div>
                                 </div>
                                 <div class="like_btn_area">
-                                    <a class="level-item is-sparta like_btn" aria-label="heart" onclick="toggle_like('${post['_id']}', 'heart')">
+                                    <a class="level-item is-sparta like_btn" aria-label="heart" onclick="toggle_like_bookmark('${post['_id']}', 'heart')">
                                         <strong class="is-sparta">
                                             <i style="color:crimson" class="fa ${class_heart}"
                                                aria-hidden="true"></i></strong>
@@ -275,11 +276,12 @@ function get_posts_like() {
                                 </div>
                             </div>
                         </div>`
-                    $("#post-box").append(html_temp)
+                     posts_list.push(html_temp);
                 }
             }
         }
     })
+     return posts_list
 }
 
 
@@ -287,7 +289,6 @@ function toggle_like(post_id, type) {
     let token = $.cookie('mytoken');
     if (token !== undefined) {
         let $a_like = $(`#${post_id} a[aria-label='heart']`)
-        console.log($a_like)
         let $i_like = $a_like.find("i")
         if ($i_like.hasClass("fa-heart")) {
             $.ajax({
@@ -299,7 +300,6 @@ function toggle_like(post_id, type) {
                     action_give: "unlike"
                 },
                 success: function (response) {
-                    console.log(response["count"])
                     $i_like.addClass("fa-heart-o").removeClass("fa-heart")
                     $(`#${post_id} .like_count`).text("좋아요 "+num2str(response["count"]))
                     $a_like.find("span.like_count").text(num2str(response["count"]))
@@ -315,7 +315,6 @@ function toggle_like(post_id, type) {
                     action_give: "like"
                 },
                 success: function (response) {
-                    console.log(response["count"])
                     $i_like.addClass("fa-heart").removeClass("fa-heart-o")
                     $(`#${post_id} .like_count`).text("좋아요 "+num2str(response["count"]))
                     $a_like.find("span.like_count").text(num2str(response["count"]))
@@ -326,6 +325,47 @@ function toggle_like(post_id, type) {
     } else {
         alert("로그인 후에 사용하실 수 있습니다.")
     }
+}
 
+function toggle_like_bookmark(post_id, type) {
+    let token = $.cookie('mytoken');
+    if (token !== undefined) {
+        let $a_like = $(`#${post_id} a[aria-label='heart']`)
+        let $i_like = $a_like.find("i")
+        if ($i_like.hasClass("fa-heart")) {
+            $.ajax({
+                type: "POST",
+                url: "/update_like",
+                data: {
+                    post_id_give: post_id,
+                    type_give: type,
+                    action_give: "unlike"
+                },
+                success: function (response) {
+                    $i_like.addClass("fa-heart-o").removeClass("fa-heart")
+                    $(`#${post_id} .like_count`).text("좋아요 "+num2str(response["count"]))
+                    $a_like.find("span.like_count").text(num2str(response["count"]))
+                    window.location.reload()
+                }
+            })
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "/update_like",
+                data: {
+                    post_id_give: post_id,
+                    type_give: type,
+                    action_give: "like"
+                },
+                success: function (response) {
+                    $i_like.addClass("fa-heart").removeClass("fa-heart-o")
+                    $(`#${post_id} .like_count`).text("좋아요 "+num2str(response["count"]))
+                    $a_like.find("span.like_count").text(num2str(response["count"]))
+                }
+            })
 
+        }
+    } else {
+        alert("로그인 후에 사용하실 수 있습니다.")
+    }
 }
