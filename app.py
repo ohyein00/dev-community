@@ -37,7 +37,14 @@ def main():
 
 @app.route('/write')
 def write():
-    return render_template("write.html")
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        return render_template("write.html", nickname=user_info['nickname'])
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home", msg='로그인이 필요한 페이지입니다.'))
 @app.route('/list')
 def lists():
     return render_template("list.html")
