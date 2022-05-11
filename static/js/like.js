@@ -57,7 +57,6 @@ function get_posts(count,sortOption = "new") {
     } else {
         host_url = "get_guest_posts";
     }
-
     $.ajax({
         type: "GET",
         url: `/${host_url}`,
@@ -82,7 +81,6 @@ function get_posts(count,sortOption = "new") {
                                             <img src="data:image;base64, ${file}"/></li>
                                         </div>`;
                         image_temp = image_temp + temp;
-
                     }
                     for (let j = 0; j < comment_list.length; j++) {
                         let time_post = new Date(comment_list[j]["date"])

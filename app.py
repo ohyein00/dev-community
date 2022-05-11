@@ -9,7 +9,8 @@ from bson import ObjectId
 from werkzeug.utils import secure_filename
 
 from pymongo import MongoClient
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,timezone
+import dateutil
 import certifi
 
 ca = certifi.where()
@@ -48,6 +49,7 @@ def main():
     for post in posts:
         post["_id"] = str(post["_id"])
         post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
+
         image = []
         if len(post['img_ids']) > 0:
             for img_id in post['img_ids']:
@@ -55,14 +57,14 @@ def main():
         post["s3_image_list"] = image
         post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
         post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+        for comment in post["comment_list"]:
+            comment["_id"] = str(comment["_id"])
         #좋아요 유저체크 분기
         if bool(user_id) :
             post["heart_by_me"] = bool(
                 db.likes.find_one({"post_id": post["_id"],"username": user_id}))
         else:
             post["heart_by_me"] = False
-        for comment in post["comment_list"]:
-            comment["_id"] = str(comment["_id"])
 
     return render_template('index.html', posts=posts, user_id=user_id)
 
@@ -263,7 +265,6 @@ def get_posts():
             posts = list(db.post_data.find({}).sort("date", 1).skip(count).limit(3))
         else:
             posts = list(db.post_data.find({}).sort("date", -1).skip(count).limit(3))
-
 
         for post in posts:
             post["_id"] = str(post["_id"])
