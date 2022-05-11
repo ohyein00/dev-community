@@ -38,6 +38,7 @@
     <link href='{{ url_for("static", filename="css/ui.css") }}' rel="stylesheet">
     <script src='{{ url_for("static", filename="js/index.js") }}'></script>
     <script src='{{ url_for("static", filename="js/like.js") }}'></script>
+    <script src='{{ url_for("static", filename="js/scroll.js") }}'></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Devom - 개발자 커뮤니티</title>
@@ -51,9 +52,15 @@
                 $(".login > small").text("로그인");
                 $('.login').prop('href', "/login")
             }
-            infinity_scroll_list(10);
+            let count = 10
+            if ($.cookie('count') !== undefined){
+                count = $.cookie('count')
+            }
+            infinity_scroll_list(parseInt(count));
 
         })
+
+
 
         // 검색
         function execSearch() {
@@ -129,7 +136,7 @@
                                         </p>
                                         <p class="feed_info">
                                             <span class="time">${time_before}</span>
-                                            <span class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
+                                            <span id="${post['_id']}_like" class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
                                         </p>
 
                                     </div>
@@ -335,6 +342,13 @@
                                                 </div>
                                             </div>
                                         {% endfor %}
+                                        {% if post["count_comment"] > 3 %}
+                                            <diV style="width: 100%; display: flex; align-items: center; justify-content: center;">
+                                                <button style="border: 0px;"  class="more_btn" onclick="toggle_comment()">
+                                                    <img width="15" height="15" src="/static/profile_pics/more_icon.png">
+                                                </button>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                     {% if user_id %}
                                         <div class="input_wrap">

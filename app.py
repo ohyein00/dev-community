@@ -43,8 +43,13 @@ def check_user_id():
 @app.route('/')
 def main():
     # 메인에서 바로 피드 출력
-    posts = list(db.post_data.find({}).sort("date", -1).limit(10))
+    count_receive = request.cookies.get('count')
+    count =10
+    if count_receive is not None:
+        count = int(count_receive)
+    posts = list(db.post_data.find({}).sort("date", -1).limit(count))
     user_id = check_user_id()
+    comment_count = 0
     for post in posts:
         post["_id"] = str(post["_id"])
         post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
@@ -55,7 +60,7 @@ def main():
                 image.append(get_img_file(ObjectId(img_id)))
         post["s3_image_list"] = image
         post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
-        post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+        post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}).sort("date", -1))
         for comment in post["comment_list"]:
             comment["_id"] = str(comment["_id"])
         #좋아요 유저체크 분기
@@ -65,7 +70,7 @@ def main():
         else:
             post["heart_by_me"] = False
 
-    return render_template('index.html', posts=posts, user_id=user_id)
+    return render_template('index.html', posts=posts, user_id=user_id, comment_count = comment_count)
 
 @app.route('/write')
 def write():
@@ -257,6 +262,7 @@ def get_posts():
     count = int(request.args.get("count"))
     token_receive = request.cookies.get('mytoken')
     sort_option = request.args['sortOption']
+
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
 
@@ -264,7 +270,8 @@ def get_posts():
             posts = list(db.post_data.find({}).sort("date", 1).skip(count).limit(3))
         else:
             posts = list(db.post_data.find({}).sort("date", -1).skip(count).limit(3))
-
+        #posts = list(db.post_data.find({}).sort("date", -1).skip(count).limit(3))
+        print(len(posts))
         for post in posts:
             post["_id"] = str(post["_id"])
             post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
