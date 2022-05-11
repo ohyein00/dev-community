@@ -28,3 +28,12 @@ function show_list() {
         }
     })
 }
+
+const sortFeed = opt => {
+    const feeds = document.getElementsByClassName('feed_frame');
+
+    _.go(
+        feeds,
+        _.map(v => v.dataset.postinfo)
+    )
+}

@@ -43,6 +43,7 @@ def check_user_id():
 def main():
     # 메인에서 바로 피드 출력
     posts = list(db.post_data.find({}).sort("date", -1).limit(20))
+
     user_id = check_user_id()
     for post in posts:
         post["_id"] = str(post["_id"])
@@ -62,6 +63,7 @@ def main():
             post["heart_by_me"] = False
         for comment in post["comment_list"]:
             comment["_id"] = str(comment["_id"])
+
     return render_template('index.html', posts=posts, user_id=user_id)
 
 @app.route('/write')
