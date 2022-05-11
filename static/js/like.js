@@ -47,8 +47,7 @@ function comment(id) {
     })
 }
 
-
-function get_posts() {
+function get_posts(sortOption = "new") {
     let host_url = "";
     let token = $.cookie('mytoken');
     if (token !== undefined) {
@@ -56,10 +55,11 @@ function get_posts() {
     } else {
         host_url = "get_guest_posts";
     }
+
     $.ajax({
         type: "GET",
         url: `/${host_url}`,
-        data: {},
+        data: {sortOption: sortOption},
         success: function (response) {
             if (response["result"] == "success") {
                 let posts = response["posts"]

@@ -53,6 +53,130 @@
                 $('.login').prop('href', "/login")
             }
         })
+
+        // 검색
+        function execSearch() {
+            let hash = $("#search_hash").val()
+            console.log(hash)
+            if (hash == "") {
+                alert("검색어를 입력하세요");
+                $('#search_hash').focus();
+                return;
+            }
+
+            $("#post-box").empty()
+            let host_url = "";
+            let token = $.cookie('mytoken');
+            if (token !== undefined) {
+                host_url = "search";
+            } else {
+                host_url = "guest_search";
+            }
+
+            $.ajax({
+                type: 'GET',
+                url: `/${host_url}?hash_give=${hash}`,
+                success: function (response) {
+                    if (response["result"] == "success") {
+                        let posts = response["posts"]
+                        for (let i = 0; i < posts.length; i++) {
+                            let post = posts[i]
+                            let class_heart = post['heart_by_me'] ? "fa-heart" : "fa-heart-o"
+                            let image_list = post["s3_image_list"];
+                            let comment_list = post["comment_list"];
+                            let image_temp = ``;
+                            let comment_temp = ``;
+                            console.log(comment_list)
+                            for (const file of image_list) {
+                                let temp = `<div class="img_frame">
+                                            <img src="data:image;base64, ${file}"/></li>
+                                        </div>`;
+                                image_temp = image_temp + temp;
+
+                            }
+                            for (let j = 0; j < comment_list.length; j++) {
+                                let time_post = new Date(comment_list[j]["date"])
+                                let time_before = time2str(time_post)
+                                let temp = `<div class="comment_frame" id="${comment_list[j]["_id"]}">
+                                        <figure class="user_img">
+                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                                        </figure>
+                                        <div class="comment_detail">
+                                            <p class="user_name">
+                                                <strong>${comment_list[j]['profile_name']}</strong>
+                                                <small style="font-size: xx-small">@${comment_list[j]['username']}</small>
+                                                <small class="time contour left">${time_before}</small>
+                                            </p>
+                                            <p class="user_comment">${comment_list[j]['comment']}</p>
+                                        </div>
+                                    </div>`
+
+                                comment_temp = comment_temp + temp;
+                            }
+                            let time_post = new Date(post["date"])
+                            let time_before = time2str(time_post)
+                            let html_temp = `<div class="feed_frame" id="${post['_id']}">
+                            <article class="feed">
+                                <div class="media user_info">
+                                    <figure class="image user_img">
+                                        <img src="/static/${post['profile_placeholder']}" alt="Image">
+                                    </figure>
+                                    <div class="text_area">
+                                        <p class="user_name">
+                                            <strong>${post['profile_name']}</strong>
+                                            <small style="font-size: xx-small">@${post['username']}</small>
+                                        </p>
+                                        <p class="feed_info">
+                                            <span class="time">${time_before}</span>
+                                            <span class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
+                                        </p>
+
+                                    </div>
+                                </div>
+                                <div class="like_btn_area">
+                                    <a class="level-item is-sparta like_btn" aria-label="heart" onclick="toggle_like('${post['_id']}', 'heart')">
+                                        <strong class="is-sparta">
+                                            <i style="color:crimson" class="fa ${class_heart}"
+                                               aria-hidden="true"></i></strong>
+                                    </a>
+                                </div>
+                                <div class="feed_detail">
+                                    <p class="detail has_more">
+                                        <span class="txt">${post["text"]}</span>
+                                        <button class="more_btn">
+                                            더보기
+                                        </button>
+                                    </p>
+
+                                    <div class="img_group">
+                                        ${image_temp}
+                                    </div>
+                                </div>
+                            </article>
+                            <div class="feed_comment">
+                                <div class="comment_group">
+                                    ${comment_temp}
+                                </div>
+                                <div class="input_wrap">
+                                    <div class="input_area gray_type is_flex">
+                                        <label class="${post['_id']}">
+                                            <input type="text" placeholder="댓글을 입력하세요" maxlength="100">
+                                        </label>
+                                        <button type="submit" onclick="comment('${post['_id']}')">
+                                            입력
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>`
+                            $("#post-box").append(html_temp)
+                        }
+                    }
+                }
+            })
+        }
+
     </script>
 </head>
 
@@ -69,10 +193,17 @@
                                 <button style="width: 30px; height: 30px; padding: 0px;" class="btn btn-secondary"
                                         type="button"><i style="margin: 0px;" class="fa fa-search"
                                                          aria-hidden="true"></i></button>
+
+                <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation" style="padding: 0px;">
+                        <div class="input-group">
+                            <input id="search_hash" style="font-size: 12px" type="text" class="form-control" placeholder="검색 키워드를 입력하세요!">
+                            <span class="input-group-btn">
+                                <button onclick="execSearch()" style="width: 30px; height: 30px; padding: 0px;" class="btn btn-secondary" type="button"><i style="margin: 0px;" class="fa fa-search" aria-hidden="true"></i></button>
                             </span>
                     </div>
                     <div class="navbar-brand" style="padding: 0px; margin-bottom: 0px; margin-top: 0px;">
                         <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+
                             <strong class="is-sparta"
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
                                     style="color:black" class="fa fa-list" aria-hidden="true"></i></strong>
@@ -114,6 +245,11 @@
             <main>
 
                 <section class="list_sec">
+                    <div id="sort_box" class="container">
+                        <span id="new" onclick="get_posts('new')" class="sort_item sort_hidden">게시일&uarr;</span>
+                        <span id="old" onclick="get_posts('old')" class="sort_item text_red">게시일&darr;</span>
+                        <span id="like" onclick="get_posts('like')" class="sort_item">좋아요순</span>
+                    </div>
                     <div id="post-box" class="container">
                         <!-- 피드 반복 -->
                         {% for post in posts %}
