@@ -23,42 +23,63 @@ app.config['UPLOAD_FOLDER'] = "./static/profile_pics"
 SECRET_KEY = 'SPARTA'
 fs = gridfs.GridFS(db)
 
+
 def get_img_file(img_id):
     img_binary = fs.get(img_id)
     base64_img = codecs.encode(img_binary.read(), 'base64')
     decoded_img = base64_img.decode('utf-8')
     return decoded_img
 
+#유저 아이디 체크. 비로그인시 False값 출력
+def check_user_id():
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        return payload["id"]
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return False
 
 @app.route('/')
 def main():
-    myname = "Devom"
-    return render_template("index.html", name=myname)
+    # 메인에서 바로 피드 출력
+    posts = list(db.post_data.find({}).sort("date", -1).limit(20))
+    user_id = check_user_id()
+    for post in posts:
+        post["_id"] = str(post["_id"])
+        post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
+        image = []
+        if len(post['img_ids']) > 0:
+            for img_id in post['img_ids']:
+                image.append(get_img_file(ObjectId(img_id)))
+        post["s3_image_list"] = image
+        post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
+        post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+        #좋아요 유저체크 분기
+        if bool(user_id) :
+            post["heart_by_me"] = bool(
+                db.likes.find_one({"post_id": post["_id"],"username": user_id}))
+        else:
+            post["heart_by_me"] = False
+        for comment in post["comment_list"]:
+            comment["_id"] = str(comment["_id"])
+    return render_template('index.html', posts=posts, user_id=user_id)
 
 @app.route('/write')
 def write():
-    return render_template("write.html")
+    if len(request.args) > 0:
+        print(request.args)
+
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        return render_template("write.html", nickname=user_info['nickname'])
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home", msg='로그인이 필요한 페이지입니다.'))
 @app.route('/list')
 def lists():
     return render_template("list.html")
-
-@app.route('/read', methods=['GET'])
-def read():
-    return render_template("read.html")
-
-@app.route('/read_result', methods=['GET'])
-def read_result():
-    contents = list(db.tmp.find({}))
-    result = []
-    for content in contents:
-        img_ids = content['img_ids']
-        results = []
-        if len(img_ids) > 0:
-            for img_id in img_ids:
-                results.append(get_img_file(img_id))
-        result.append(results)
-
-    return jsonify({'result': 'success', 'files': result})
 
 @app.route('/login')
 def login():
@@ -145,6 +166,9 @@ def posting():
 
         text_receive = request.form['text']
         date_receive = request.form['date']
+        option_receive = request.form['option']
+        if request.form['post_id'] != "":
+            post_id_receive = request.form['post_id']
 
         pattern = '#([0-9a-zA-Z가-힣]*)'
         find_hash = re.compile(pattern)
@@ -156,15 +180,18 @@ def posting():
                 img_id = fs.put(request.files[file])
                 img_ids.append(str(img_id))
 
-        db.post_data.insert_one({
-            "username": user_info['username'],
-            "profile_name": user_info["nickname"],
-            "profile_placeholder": user_info["img"],
-            'date': date_receive,
-            'text': text_receive,
-            'hash_tags': hash_tags,
-            'img_ids': img_ids
-        })
+        if option_receive == 'update':
+            db.post_data.update_one({'_id': post_id_receive}, {'$set': {'text': text_receive, 'img_ids': img_ids}})
+        else:
+            db.post_data.insert_one({
+                "username": user_info['username'],
+                "profile_name": user_info["nickname"],
+                "profile_placeholder": user_info["img"],
+                'date': date_receive,
+                'text': text_receive,
+                'hash_tags': hash_tags,
+                'img_ids': img_ids
+            })
 
         return jsonify({"result": "success", 'msg': '포스팅 성공'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
@@ -198,9 +225,15 @@ def comment_list():
 def get_posts():
     count = int(request.args.get("count"))
     token_receive = request.cookies.get('mytoken')
+    sort_option = request.args['sortOption']
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        posts = list(db.post_data.find({}).sort("date", -1).skip(count).limit(3))
+
+        if sort_option == 'old':
+            posts = list(db.post_data.find({}).sort("date", 1).limit(20).skip(count).limit(3))
+        else:
+            posts = list(db.post_data.find({}).sort("date", -1).limit(20).skip(count).limit(3))
+
 
         for post in posts:
             post["_id"] = str(post["_id"])
@@ -217,6 +250,9 @@ def get_posts():
             post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
             for comment in post["comment_list"]:
                 comment["_id"] = str(comment["_id"])
+
+        if sort_option == 'like':
+            posts = sorted(posts, key=lambda post: -post['count_heart'])
         # 포스팅 목록 받아오기
         return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
@@ -256,6 +292,7 @@ def get_posts_like():
         return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts_like})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
+
 
 @app.route("/get_guest_posts", methods=['GET'])
 def get_guest_posts():
@@ -302,10 +339,60 @@ def update_like():
         else:
             db.likes.delete_one(doc)
         count = db.likes.count_documents({"post_id": post_id_receive, "type": type_receive})
-        print(count)
+
         return jsonify({"result": "success", 'msg': 'updated', "count": count})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
+
+@app.route("/search", methods=['GET'])
+def search():
+    hash_receive = request.args.get("hash_give")
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        posts = list(db.post_data.find({"hash_tags":hash_receive}).sort("date", -1).limit(20))
+
+        for post in posts:
+            post["_id"] = str(post["_id"])
+            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
+            post["heart_by_me"] = bool(
+                db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": payload["id"]}))
+
+            image = []
+            if len(post['img_ids']) > 0:
+                for img_id in post['img_ids']:
+                    image.append(get_img_file(ObjectId(img_id)))
+            post["s3_image_list"] = image
+            post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
+            post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+            for comment in post["comment_list"]:
+                comment["_id"] = str(comment["_id"])
+        # 포스팅 목록 받아오기
+        return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home"))
+
+@app.route("/guest_search", methods=['GET'])
+def guest_search():
+    hash_receive = request.args.get("hash_give")
+    posts = list(db.post_data.find({"hash_tags": hash_receive}).sort("date", -1).limit(20))
+    for post in posts:
+        post["_id"] = str(post["_id"])
+        post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
+        post["heart_by_me"] = bool(
+            db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": "GUEST"}))
+        img_ids = post['img_ids']
+        image = []
+        if len(img_ids) > 0:
+            for img_id in img_ids:
+                image.append(get_img_file(ObjectId(img_id)))
+        post["s3_image_list"] = image
+        post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
+        post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+        for comment in post["comment_list"]:
+            comment["_id"] = str(comment["_id"])
+    # 포스팅 목록 받아오기
+    return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
 
 @app.route('/logout', methods=['GET'])
 def logout():

@@ -173,3 +173,28 @@ input::-webkit-calendar-picker-indicator {
         margin-top: 130px;
     }
 }
+
+
+/*-------------- sort box ---------------- */
+.sort_hidden {
+    display: none;
+}
+.sort_item {
+    color: #4a4a4a;
+}
+.text_red {
+    color: #dc143c !important;
+}
+#sort_box span:hover {
+    cursor: pointer;
+}
+#sort_box {
+    display: flex;
+    justify-content: end;
+}
+#sort_box span {
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin: 10px 10px 10px 0px;
+}
+/*------------- sort box end ------------- */
