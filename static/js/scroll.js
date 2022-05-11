@@ -1,9 +1,5 @@
 function infinity_scroll_list(count) {
-    let posts_list = get_posts(count);
-    count += 3;
-    for (let i = 0; i < posts_list.length; i++) {
-        $("#post-box").append(posts_list[i])
-    }
+
     window.onscroll = function (e) {
         //추가되는 임시 콘텐츠
         //window height + window scrollY 값이 document height보다 클 경우,
@@ -25,11 +21,6 @@ function infinity_scroll_list(count) {
     };
 }
 function infinity_scroll_like(count) {
-    let posts_list = get_posts_like(count);
-    count += 3;
-    for (let i = 0; i < posts_list.length; i++) {
-        $("#post-box").append(posts_list[i])
-    }
     window.onscroll = function (e) {
         //추가되는 임시 콘텐츠
         //window height + window scrollY 값이 document height보다 클 경우,
