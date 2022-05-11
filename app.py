@@ -184,6 +184,17 @@ def posting():
             'img_ids': img_ids
         })
 
+        # hash_tag db
+        for hash in hash_tags:
+            if db.users.find_one({"username":user_info['username'], "hash_tags":hash}) is None:
+                db.users.update_one({"username":user_info['username']}, {"$push":{"hash_tags":hash}})
+
+        # if db.hash_folder.find_one({"username":user_info['username']}) is None:
+        #     db.hash_folder.insert_one({"username":user_info['username']})
+        # for hash in hash_tags:
+        #     if db.hash_folder.find_one({"username":user_info['username'], "hash_tags":hash}) is None:
+        #         db.hash_folder.update_one({"username":user_info['username']}, {"$push":{"hash_tags":hash}})
+
         return jsonify({"result": "success", 'msg': '포스팅 성공'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
