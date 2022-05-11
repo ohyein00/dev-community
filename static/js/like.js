@@ -48,7 +48,7 @@ function comment(id) {
 }
 
 
-function get_posts() {
+function get_posts(sortOption = "new") {
     $("#post-box").empty()
     let host_url = "";
     let token = $.cookie('mytoken');
@@ -61,7 +61,7 @@ function get_posts() {
     $.ajax({
         type: "GET",
         url: `/${host_url}`,
-        data: {},
+        data: {sortOption: sortOption},
         success: function (response) {
             if (response["result"] == "success") {
                 let posts = response["posts"]

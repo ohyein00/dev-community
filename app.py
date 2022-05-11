@@ -204,9 +204,15 @@ def comment_list():
 @app.route("/get_posts", methods=['GET'])
 def get_posts():
     token_receive = request.cookies.get('mytoken')
+    sort_option = request.args['sortOption']
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        posts = list(db.post_data.find({}).sort("date", -1).limit(20))
+
+        if sort_option == 'old':
+            posts = list(db.post_data.find({}).sort("date", 1).limit(20))
+        else:
+            posts = list(db.post_data.find({}).sort("date", -1).limit(20))
+
 
         for post in posts:
             post["_id"] = str(post["_id"])
@@ -223,6 +229,9 @@ def get_posts():
             post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
             for comment in post["comment_list"]:
                 comment["_id"] = str(comment["_id"])
+
+        if sort_option == 'like':
+            posts = sorted(posts, key=lambda post: -post['count_heart'])
         # 포스팅 목록 받아오기
         return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):

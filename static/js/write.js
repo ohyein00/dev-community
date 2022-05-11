@@ -5,6 +5,7 @@ $(function(){
         $("#file_preview > div:nth-child(1)").html('');
         images = [];
         images = e.target.files;
+        images = images.slice(4);
         let elements = '';
         let srcs = [];
 
