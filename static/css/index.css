@@ -80,8 +80,8 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    width: 40%;
-    margin-right: 80px;
+    width: 30%;
+    margin-right: 10%;
 }
 
 .navbar-item {

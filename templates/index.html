@@ -185,49 +185,44 @@
     <div id="container">
         <div id="contents">
             <header>
-                <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation">
-                    <div class="input-group">
-                        <input id="search_hash" type="text" class="form-control" placeholder="검색 키워드를 입력하세요!">
-                        <span class="input-group-btn">
-                            <button class="btn btn-secondary" type="button" onclick="execSearch()">
-                                <i class="fa fa-search" aria-hidden="true"></i>
-                            </button>
-                        </span>
-                    </div>
-                    <div class="navbar-brand">
-                        <a class="navbar-item" href="/">
+
+                <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation" style="padding: 0px;">
+                        <div class="input-group">
+                            <input id="search_hash" style="font-size: 12px" type="text" class="form-control" placeholder="검색 키워드를 입력하세요!">
+                            <span class="input-group-btn">
+                                <button onclick="execSearch()" style="width: 30px; height: 30px; padding: 0px;" class="btn btn-secondary" type="button"><i style="margin: 0px;" class="fa fa-search" aria-hidden="true"></i></button>
+                            </span>
+                        </div>
+                    <div class="navbar-brand" style="padding: 0px; margin-bottom: 0px; margin-top: 0px;">
+                        <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+
                             <strong class="is-sparta"
-                                    style="font-family: 'Stylish', sans-serif;font-size: large;">
-                                <i style="color:black" class="fa fa-list" aria-hidden="true"></i>
-                            </strong>
-                            <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">글목록</small>
+                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
+                                    style="color:black"  class="fa fa-list" aria-hidden="true"></i></strong>
                         </a>
-                        <a class="navbar-item" href="/write">
+                        <a class="navbar-item" href="/write" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
                             <strong class="is-sparta"
-                                    style="font-family: 'Stylish', sans-serif;font-size: large;"><i
+                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
                                     style="color:darkblue" class="fa fa-pencil-square-o"
                                     aria-hidden="true"></i></strong>
-                            <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">글작성</small>
+
                         </a>
-                        <a class="navbar-item" href="/like_list">
+                        <a class="navbar-item" href="/like_list" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
                             <strong class="is-sparta"
-                                    style="font-family: 'Stylish', sans-serif;font-size: large;"><i
-                                    style="color:crimson" class="fa fa-heart" aria-hidden="true"></i></strong>
-                            <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">북마크</small>
+                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i style="color:crimson" class="fa fa-heart" aria-hidden="true"></i></strong>
+
                         </a>
-                        <a class="navbar-item" href="/profile">
+                        <a class="navbar-item" href="/profile" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
                             <strong class="is-sparta"
-                                    style="font-family: 'Stylish', sans-serif;font-size: large;"><i style="color:gray"
-                                                                                                    class="fa fa-user"
-                                                                                                    aria-hidden="true"></i></strong>
-                            <small style="font-family: 'Black Han Sans', sans-serif;font-size: small;">프로필</small>
+                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i style="color:gray"  class="fa fa-user" aria-hidden="true"></i></strong>
+
                         </a>
 
 
                     </div>
-                    <a class="login" href="/">
+                    <a class="login" href="/" style="margin-right: 20px">
                         <small class="is-sparta"
-                               style="font-family: 'Black Han Sans', sans-serif;font-size: small;">로그인</small>
+                                style="font-family: 'Black Han Sans', sans-serif;font-size: small;">로그인</small>
                     </a>
 
                 </nav>
