@@ -30,8 +30,9 @@ function time2str(date) {
 }
 
 function comment(id) {
-    let comment = $("#commnet-post").val()
+    let comment = $(`.${id} > input`).val();
     let today = new Date().toISOString()
+    console.log(comment);
     $.ajax({
         type: "POST",
         url: "/comment_list",
@@ -47,20 +48,51 @@ function comment(id) {
     })
 }
 
+function post() {
+    let comment = $("#textarea-post").val()
+    let today = new Date().toISOString()
+    $.ajax({
+        type: "POST",
+        url: "/posting",
+        data: {
+            comment_give: comment,
+            date_give: today
+        },
+        success: function (response) {
+            $("#modal-post").removeClass("is-active")
+            window.location.reload()
+        }
+    })
+}
+
 function toggle_comment(id) {
-    if ($(`#${id} > .modal`).hasClass("is-active")) {
-        $(`#${id} > .modal`).removeClass("is-active");
-    } else {
-        $(`#${id} > .modal`).addClass("is-active");
+    let token = $.cookie('mytoken');
+    if (token !== undefined) {
+        if ($(`#${id} > .modal`).hasClass("is-active")) {
+            $(`#${id} > .modal`).removeClass("is-active");
+        } else {
+            $(`#${id} > .modal`).addClass("is-active");
+        }
+    }else {
+        alert("로그인 후에 사용하실 수 있습니다.")
     }
+
 
 }
 
 function get_posts() {
     $("#post-box").empty()
+    let host_url = "";
+    let token = $.cookie('mytoken');
+    if (token !== undefined) {
+        host_url = "get_posts";
+    } else {
+        host_url = "get_guest_posts";
+    }
+
     $.ajax({
         type: "GET",
-        url: "/get_posts",
+        url: `/${host_url}`,
         data: {},
         success: function (response) {
             if (response["result"] == "success") {
@@ -96,7 +128,7 @@ function get_posts() {
                                                                         <div>
                                                                             <div class="content">
                                                                                 <p>
-                                                                                    <strong>${comment_list[j]['username']}</strong> <small>${time_before}</small>
+                                                                                    <strong>${comment_list[j]['profile_name']}</strong> <small>@${comment_list[j]['username']}</small> <small>${time_before}</small>
                                                                                     <br>
                                                                                     ${comment_list[j]['comment']}
                                                                                 </p>
@@ -154,11 +186,10 @@ function get_posts() {
                                                     <div class="box">
                                                         ${comment_temp}
                                                         <article class="media">
-
-                                                            <div class="media-content">
-
-
-                                                                <input style=" margin-left:10px; width: 60%; height:50px; border: 0px; box-shadow: 3px 3px 10px #ccc;" id="commnet-post" type="text" placeholder="댓글">
+                                                            <div class="media-content" style="display: flex; justify-content: center; align-items: center">
+                                                                <div style=" margin:0px; width: 60%; padding: 0px" class="${post['_id']}" >
+                                                                    <input style=" width: 100%; height:40px; border: 0px; box-shadow: 3px 3px 10px #ccc;"  type="text" placeholder="댓글">
+                                                                </div>
                                                                 <nav class="level is-mobile" >
 
                                                                     <div class="level-right">
@@ -188,39 +219,45 @@ function get_posts() {
 }
 
 function toggle_like(post_id, type) {
-    console.log(post_id, type)
-    let $a_like = $(`#${post_id} a[aria-label='heart']`)
-    let $i_like = $a_like.find("i")
-    if ($i_like.hasClass("fa-heart")) {
-        $.ajax({
-            type: "POST",
-            url: "/update_like",
-            data: {
-                post_id_give: post_id,
-                type_give: type,
-                action_give: "unlike"
-            },
-            success: function (response) {
-                console.log("unlike")
-                $i_like.addClass("fa-heart-o").removeClass("fa-heart")
-                $a_like.find("span.like-num").text(num2str(response["count"]))
-            }
-        })
-    } else {
-        $.ajax({
-            type: "POST",
-            url: "/update_like",
-            data: {
-                post_id_give: post_id,
-                type_give: type,
-                action_give: "like"
-            },
-            success: function (response) {
-                console.log("like")
-                $i_like.addClass("fa-heart").removeClass("fa-heart-o")
-                $a_like.find("span.like-num").text(num2str(response["count"]))
-            }
-        })
+    let token = $.cookie('mytoken');
+    if (token !== undefined) {
+        let $a_like = $(`#${post_id} a[aria-label='heart']`)
+        let $i_like = $a_like.find("i")
+        if ($i_like.hasClass("fa-heart")) {
+            $.ajax({
+                type: "POST",
+                url: "/update_like",
+                data: {
+                    post_id_give: post_id,
+                    type_give: type,
+                    action_give: "unlike"
+                },
+                success: function (response) {
+                    console.log("unlike")
+                    $i_like.addClass("fa-heart-o").removeClass("fa-heart")
+                    $a_like.find("span.like-num").text(num2str(response["count"]))
+                }
+            })
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "/update_like",
+                data: {
+                    post_id_give: post_id,
+                    type_give: type,
+                    action_give: "like"
+                },
+                success: function (response) {
+                    console.log("like")
+                    $i_like.addClass("fa-heart").removeClass("fa-heart-o")
+                    $a_like.find("span.like-num").text(num2str(response["count"]))
+                }
+            })
 
+        }
+    } else {
+        alert("로그인 후에 사용하실 수 있습니다.")
     }
+
+
 }
