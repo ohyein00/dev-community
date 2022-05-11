@@ -1,0 +1,140 @@
+<!Doctype html>
+<html lang="ko">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"></script>
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <!-- Font Awesome CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <!-- 구글폰트 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href='{{ url_for("static", filename="css/reset.css") }}' rel="stylesheet">
+    <link href='{{ url_for("static", filename="css/index.css") }}' rel="stylesheet">
+    <link href='{{ url_for("static", filename="css/ui.css") }}' rel="stylesheet">
+    <script src='{{ url_for("static", filename="js/index.js") }}'></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Devom - 개발자 커뮤니티</title>
+</head>
+
+<body>
+<div id="wrap">
+    <div id="container">
+        <div id="contents">
+            <header>
+                <h1 class="logo">{{ name }}</h1>
+            </header>
+            <main>
+                <section class="feed_sec">
+                    <div class="feed_group">
+                    <!-- 피드 반복 시작 -->
+                        <div class="feed_frame">
+                            <article class="feed">
+                                <div class="media user_info">
+                                    <figure class="image user_img">
+                                        <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                                    </figure>
+                                    <div class="text_area">
+                                        <p class="user_name">
+                                            John Smith
+                                        </p>
+                                        <p class="feed_info">
+                                            <span class="time">1시간</span>
+                                            <span class="like_count left contour">좋아요 999+</span>
+                                        </p>
+
+                                    </div>
+                                </div>
+                                <div class="like_btn_area">
+                                    <a class="level-item is-sparta like_btn" aria-label="heart">
+                                        <strong class="is-sparta">
+                                            <i style="color:crimson" class="fa fa-heart"
+                                               aria-hidden="true"></i></strong>
+                                    </a>
+                                </div>
+                                <div class="feed_detail">
+                                    <p class="detail has_more">
+                                        <span class="txt">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur
+                                        sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur
+                                        sit amet massa fringilla egestas. Nullam condimentum luctus turpis.t. Aenean efficitur
+                                        sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
+                                            </span>
+                                        <button class="more_btn">
+                                            더보기
+                                        </button>
+                                    </p>
+
+                                    <div class="img_group">
+                                        <div class="img_frame">
+                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                            <div class="feed_comment">
+                                <div class="comment_group">
+                                    <div class="comment_frame">
+                                        <figure class="user_img">
+                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                                        </figure>
+                                        <div class="comment_detail">
+                                            <p class="user_name">
+                                                이름
+                                                <small class="time contour left">1시간</small>
+                                            </p>
+                                            <p class="user_comment">댓글 댓글댓글 댓글</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input_wrap">
+                                    <form>
+                                        <div class="input_area gray_type is_flex">
+                                            <label>
+                                                <input type="text" placeholder="댓글을 입력하세요" maxlength="100">
+                                            </label>
+                                            <button type="submit">
+                                                입력
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <!-- 피드 반복 종료 -->
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

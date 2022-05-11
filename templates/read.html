@@ -27,17 +27,22 @@
 
     <script>
         function read() {
-            console.log($('#num').val());
             $.ajax({
                 type: "GET",
                 url: "/read_result",
-                data: {id: $('#num').val()},
+                data: {},
                 success: function (res) {
-                    for (const file of res.files) {
-                        $('#result').append(`
-                            <img src="data:image;base64, ${file}">
-                        `)
+
+                    for (let i = 0; i < res['files'].length; i++) {
+                        console.log(res['files'][i])
+                        for (const file of res['files'][i]) {
+                            console.log(file)
+                            $('#result').append(`
+                                <img src="data:image;base64, ${file}">
+                            `)
+                        }
                     }
+
                 }
             });
         }
