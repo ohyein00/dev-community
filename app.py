@@ -9,8 +9,8 @@ from bson import ObjectId
 from werkzeug.utils import secure_filename
 
 from pymongo import MongoClient
-from datetime import datetime, timedelta,timezone
-import dateutil
+from datetime import datetime, timedelta, timezone
+import dateutil.parser
 import certifi
 
 ca = certifi.where()
@@ -40,6 +40,25 @@ def check_user_id():
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return False
 
+#시간차 계산
+def time_difference(compare_time):
+    thisTime = datetime.now(timezone.utc)
+    postTime = dateutil.parser.parse(compare_time)
+    restTime = thisTime - postTime
+    if restTime.days > 0 :
+        return str(restTime.days) + '일'#일
+    elif int(restTime.seconds/3600)>0 :
+        return str(int(restTime.seconds/3600)) + '시간'#시간
+    elif int(restTime.seconds /60) > 5:
+        return str(int(restTime.seconds /60)) + '분'#분
+    else :
+        return '방금'
+#문자열 자르기
+def cut_string(string,max):
+    if len(string)>max :
+        result = string[0:max]
+        return result
+
 @app.route('/')
 def main():
     # 메인에서 바로 피드 출력
@@ -48,16 +67,19 @@ def main():
     for post in posts:
         post["_id"] = str(post["_id"])
         post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
-
+        post["time_difference"] = time_difference(post["date"])
         image = []
         if len(post['img_ids']) > 0:
             for img_id in post['img_ids']:
                 image.append(get_img_file(ObjectId(img_id)))
+
+        post["cut_text"] = cut_string(post["text"], 200)
         post["s3_image_list"] = image
         post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
         post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
         for comment in post["comment_list"]:
             comment["_id"] = str(comment["_id"])
+            comment["time_difference"] = time_difference(comment["date"])
         #좋아요 유저체크 분기
         if bool(user_id) :
             post["heart_by_me"] = bool(
@@ -66,6 +88,13 @@ def main():
             post["heart_by_me"] = False
 
     return render_template('index.html', posts=posts, user_id=user_id)
+
+
+@app.route('/get_more_txt', methods=['GET'])
+def get_more_txt():
+    postId = request.args.get("id")
+    post = db.post_data.find_one({"_id": ObjectId(postId)})
+    return jsonify({'data':post["text"]})
 
 @app.route('/write')
 def write():
