@@ -103,10 +103,11 @@
 
 
 /* feed_comment */
-.feed_comment {
+.feed_comment{
+    margin-top:20px;
+}
+.feed_comment .comment_group{
     width: 100%;
-    margin-top: 10px;
-    padding-top: 20px;
     border-top: 1px solid #dcdcdc;
 }
 
