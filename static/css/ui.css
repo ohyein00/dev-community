@@ -28,7 +28,13 @@
     margin-bottom: 5px;
     font-weight:500;
 }
-
+.user_info .user_name small{
+    color:#999;
+}
+.comment_detail .user_name .time{
+    font-size:11px;
+    color:#999;
+}
 .feed_frame {
     background-color: #fff;
     border-radius: 6px;
@@ -52,17 +58,16 @@
 }
 .feed_detail .detail{
     font-size:14px;
-
 }
-.feed_detail .detail.has_more .txt::after{
-    content:'...';
+.feed_detail .more_btn::before{
+    content:'…';
+
 }
 .feed_detail .detail .more_btn{
     display:inline;
     font-size:12px;
-    font-weight:500;
-    padding:0 0 0 5px;
-    text-decoration: underline;
+    font-weight:bold;
+    padding:0 5px;
     outline:none;
     border:none;
 }

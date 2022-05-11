@@ -9,8 +9,8 @@ from bson import ObjectId
 from werkzeug.utils import secure_filename
 
 from pymongo import MongoClient
-from datetime import datetime, timedelta,timezone
-import dateutil
+from datetime import datetime, timedelta, timezone
+import dateutil.parser
 import certifi
 
 ca = certifi.where()
@@ -40,9 +40,29 @@ def check_user_id():
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return False
 
+#시간차 계산
+def time_difference(compare_time):
+    thisTime = datetime.now(timezone.utc)
+    postTime = dateutil.parser.parse(compare_time)
+    restTime = thisTime - postTime
+    if restTime.days > 0 :
+        return str(restTime.days) + '일'#일
+    elif int(restTime.seconds/3600)>0 :
+        return str(int(restTime.seconds/3600)) + '시간'#시간
+    elif int(restTime.seconds /60) > 5:
+        return str(int(restTime.seconds /60)) + '분'#분
+    else :
+        return '방금'
+#문자열 자르기
+def cut_string(string,max):
+    if len(string)>max :
+        result = string[0:max]
+        return result
+
 @app.route('/')
 def main():
     # 메인에서 바로 피드 출력
+
     count_receive = request.cookies.get('count')
     count =10
     if count_receive is not None:
@@ -53,16 +73,19 @@ def main():
     for post in posts:
         post["_id"] = str(post["_id"])
         post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
-
+        post["time_difference"] = time_difference(post["date"])
         image = []
         if len(post['img_ids']) > 0:
             for img_id in post['img_ids']:
                 image.append(get_img_file(ObjectId(img_id)))
+
+        post["cut_text"] = cut_string(post["text"], 200)
         post["s3_image_list"] = image
         post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
         post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}).sort("date", -1))
         for comment in post["comment_list"]:
             comment["_id"] = str(comment["_id"])
+            comment["time_difference"] = time_difference(comment["date"])
         #좋아요 유저체크 분기
         if bool(user_id) :
             post["heart_by_me"] = bool(
@@ -71,6 +94,13 @@ def main():
             post["heart_by_me"] = False
 
     return render_template('index.html', posts=posts, user_id=user_id, comment_count = comment_count)
+
+
+@app.route('/get_more_txt', methods=['GET'])
+def get_more_txt():
+    postId = request.args.get("id")
+    post = db.post_data.find_one({"_id": ObjectId(postId)})
+    return jsonify({'data':post["text"]})
 
 @app.route('/write')
 def write():
@@ -435,7 +465,72 @@ def guest_search():
 def logout():
     return redirect("/")
 
+@app.route("/sort", methods=['GET'])
+def sort():
+    token_receive = request.cookies.get('mytoken')
+    sort_option = request.args['opt']
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
 
+        if sort_option == 'old':
+            posts = list(db.post_data.find({}).sort("date", 1))
+        else:
+            posts = list(db.post_data.find({}).sort("date", -1))
+
+
+        for post in posts:
+            post["_id"] = str(post["_id"])
+            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
+            post["heart_by_me"] = bool(
+                db.likes.find_one({"post_id": post["_id"], "username": payload["id"]}))
+
+            image = []
+            if len(post['img_ids']) > 0:
+                for img_id in post['img_ids']:
+                    image.append(get_img_file(ObjectId(img_id)))
+            post["s3_image_list"] =image
+            post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
+            post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+            for comment in post["comment_list"]:
+                comment["_id"] = str(comment["_id"])
+
+        if sort_option == 'like':
+            posts = sorted(posts, key=lambda post: -post['count_heart'])
+        # 포스팅 목록 받아오기
+        return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home"))
+
+@app.route("/guest_sort", methods=['GET'])
+def guest_sort():
+    posts = list(db.post_data.find({}).sort("date", -1))
+    sort_option = request.args['opt']
+
+    if sort_option == 'old':
+        posts = list(db.post_data.find({}).sort("date", 1))
+    else:
+        posts = list(db.post_data.find({}).sort("date", -1))
+
+    for post in posts:
+        post["_id"] = str(post["_id"])
+        post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
+        post["heart_by_me"] = bool(
+            db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": "GUEST"}))
+
+        image = []
+        if len(post['img_ids']) > 0:
+            for img_id in post['img_ids']:
+                image.append(get_img_file(ObjectId(img_id)))
+        post["s3_image_list"] = image
+        post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
+        post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+        for comment in post["comment_list"]:
+            comment["_id"] = str(comment["_id"])
+
+    if sort_option == 'like':
+        posts = sorted(posts, key=lambda post: -post['count_heart'])
+    # 포스팅 목록 받아오기
+    return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)

@@ -36,6 +36,8 @@
     <link href='{{ url_for("static", filename="css/reset.css") }}' rel="stylesheet">
     <link href='{{ url_for("static", filename="css/index.css") }}' rel="stylesheet">
     <link href='{{ url_for("static", filename="css/ui.css") }}' rel="stylesheet">
+    <script src="https://unpkg.com/fxjs/dist/fx.js"></script>
+    <script>const { L, C } = window._;</script>
     <script src='{{ url_for("static", filename="js/index.js") }}'></script>
     <script src='{{ url_for("static", filename="js/like.js") }}'></script>
     <script src='{{ url_for("static", filename="js/scroll.js") }}'></script>
@@ -201,6 +203,7 @@
                                 <button style="width: 30px; height: 30px; padding: 0px;" class="btn btn-secondary"
                                         type="button"><i style="margin: 0px;" class="fa fa-search"
                                                          aria-hidden="true"></i></button>
+
                         </span>
                     </div>
                 </nav>
@@ -214,21 +217,22 @@
                                         class="btn btn-secondary" type="button"><i style="margin: 0px;"
                                                                                    class="fa fa-search"
                                                                                    aria-hidden="true"></i></button>
-                            </span>
-                    </div>
-                    <div class="navbar-brand" style="padding: 0px; margin-bottom: 0px; margin-top: 0px;">
-                        <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
 
-                            <strong class="is-sparta"
-                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
-                                    style="color:black" class="fa fa-list" aria-hidden="true"></i></strong>
-                        </a>
-                        <a class="navbar-item" href="/write"
-                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
-                            <strong class="is-sparta"
-                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
-                                    style="color:darkblue" class="fa fa-pencil-square-o"
-                                    aria-hidden="true"></i></strong>
+                            </span>
+                            </div>
+                            <div class="navbar-brand" style="padding: 0px; margin-bottom: 0px; margin-top: 0px;">
+                                <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+
+                                    <strong class="is-sparta"
+                                            style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
+                                            style="color:black" class="fa fa-list" aria-hidden="true"></i></strong>
+                                </a>
+                                <a class="navbar-item" href="/write"
+                                   style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+                                    <strong class="is-sparta"
+                                            style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
+                                            style="color:darkblue" class="fa fa-pencil-square-o"
+                                            aria-hidden="true"></i></strong>
 
                         </a>
                         <a class="navbar-item" href="/like_list"
@@ -245,30 +249,31 @@
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i style="color:gray"
                                                                                                    class="fa fa-user"
                                                                                                    aria-hidden="true"></i></strong>
+                          
 
-                        </a>
+                                </a>
 
 
-                    </div>
-                    <a class="login" href="/" style="margin-right: 20px">
-                        <small class="is-sparta"
-                               style="font-family: 'Black Han Sans', sans-serif;font-size: small;">로그인</small>
-                    </a>
+                            </div>
+                            <a class="login" href="/" style="margin-right: 20px">
+                                <small class="is-sparta"
+                                       style="font-family: 'Black Han Sans', sans-serif;font-size: small;">로그인</small>
+                            </a>
 
-                </nav>
+                        </nav>
             </header>
             <main>
 
                 <section class="list_sec">
                     <div id="sort_box" class="container">
-                        <span id="new" onclick="get_posts('new')" class="sort_item sort_hidden">게시일&uarr;</span>
-                        <span id="old" onclick="get_posts('old')" class="sort_item text_red">게시일&darr;</span>
-                        <span id="like" onclick="get_posts('like')" class="sort_item">좋아요순</span>
+                        <span id="new" onclick="sort('new')" class="sort_item">게시일&uarr;</span>
+                        <span id="old" onclick="sort('old')" class="sort_item">게시일&darr;</span>
+                        <span id="like" onclick="sort('like')" class="sort_item">좋아요순</span>
                     </div>
                     <div id="post-box" class="container">
                         <!-- 피드 반복 -->
                         {% for post in posts %}
-                            <div class="feed_frame" id="{{ post['_id'] }}">
+                            <div class="feed_frame" id="{{ post['_id'] }}" data-postinfo="{{ post }}">
                                 <article class="feed">
                                     <div class="media user_info">
                                         <figure class="image user_img">
@@ -280,7 +285,7 @@
                                                 <small style="font-size: xx-small">{{ post['username'] }}</small>
                                             </p>
                                             <p class="feed_info">
-                                                <span class="info_unit contour time">시간</span>
+                                                <span class="info_unit contour time">{{ post["time_difference"] }} 전</span>
                                                 <span class="info_unit contour">좋아요 {{ post['count_heart'] }}</span>
                                                 {% if user_id == post["username"] %}
                                                     <span class="info_unit contour">수정</span>
@@ -306,10 +311,15 @@
                                     </div>
                                     <div class="feed_detail">
                                         <p class="detail has_more">
-                                            <span class="txt">{{ post["text"] }}</span>
-                                            <button class="more_btn">
-                                                더보기
-                                            </button>
+                                            {% if post["cut_text"] %}
+                                                <span class="txt">{{ post["cut_text"] }}</span>
+                                                <button onclick="more_text(event,'{{ post["_id"] }}')" class="more_btn">
+                                                    더보기
+                                                </button>
+                                            {% else %}
+                                                <span class="txt">{{ post["text"] }}</span>
+                                            {% endif %}
+
                                         </p>
 
                                         <div class="img_group">
@@ -336,7 +346,8 @@
                                                     <p class="user_name">
                                                         <strong>{{ comment["profile_name"] }}</strong>
                                                         <small style="font-size: xx-small">{{ comment["username"] }}</small>
-                                                        <small class="time contour left">시간</small>
+                                                        <small class="time contour left">{{ comment["time_difference"] }}
+                                                            전</small>
                                                     </p>
                                                     <p class="user_comment">{{ comment["comment"] }}</p>
                                                 </div>
@@ -353,8 +364,9 @@
                                     {% if user_id %}
                                         <div class="input_wrap">
                                             <div class="input_area gray_type is_flex">
+
                                                 <label class="{{ post['_id'] }}">
-                                                    <input type="text" placeholder="댓글을 입력하세요" maxlength="100">
+                                                    <input type="text" placeholder="댓글을 입력하세요" maxlength="100" minlength ="1">
                                                 </label>
                                                 <button type="submit" onclick="comment('{{ post['_id'] }}')">
                                                     입력
