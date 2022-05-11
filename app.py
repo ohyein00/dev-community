@@ -364,6 +364,46 @@ def guest_search():
     # 포스팅 목록 받아오기
     return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
 
+@app.route('/post/hash', methods=['GET'])
+def post_hash():
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        hash_tags = db.users.find_one({"username":user_info['username']})['hash_tags']
+        return jsonify({"result": "success", "msg": "해쉬태그를 가져왔습니다.", "hash_tags": hash_tags})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home"))
+
+@app.route("/post/profile", methods=['GET'])
+def post_by_hash():
+    hash_receive = request.args.get("hash_give")
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        posts = list(db.post_data.find({"hash_tags":hash_receive, "username":user_info['username']}).sort("date", -1).limit(20))
+
+        for post in posts:
+            post["_id"] = str(post["_id"])
+            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
+            post["heart_by_me"] = bool(
+                db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": payload["id"]}))
+
+            image = []
+            if len(post['img_ids']) > 0:
+                for img_id in post['img_ids']:
+                    image.append(get_img_file(ObjectId(img_id)))
+            post["s3_image_list"] = image
+            post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
+            post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+            for comment in post["comment_list"]:
+                comment["_id"] = str(comment["_id"])
+        # 포스팅 목록 받아오기
+        return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home"))
+
 @app.route('/logout', methods=['GET'])
 def logout():
     return redirect("/")
