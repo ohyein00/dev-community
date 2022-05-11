@@ -43,7 +43,6 @@
     <title>Devom - 개발자 커뮤니티</title>
     <script>
         $(document).ready(function () {
-            get_posts();
             let token = $.cookie('mytoken');
             if (token !== undefined) {
                 $(".login > small").text("로그아웃");
@@ -52,6 +51,8 @@
                 $(".login > small").text("로그인");
                 $('.login').prop('href', "/login")
             }
+            infinity_scroll_list(10);
+
         })
 
         // 검색
@@ -196,21 +197,16 @@
                         </span>
                     </div>
                 </nav>
-                <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation"
-                     style="padding: 0px;">
-                    <div class="input-group">
-                        <input id="search_hash" style="font-size: 12px" type="text" class="form-control"
-                               placeholder="검색 키워드를 입력하세요!">
-                        <span class="input-group-btn">
-                                <button onclick="execSearch()" style="width: 30px; height: 30px; padding: 0px;"
-                                        class="btn btn-secondary" type="button">
-                                    <i style="margin: 0px;"
-                                       class="fa fa-search"
-                                       aria-hidden="true"></i></button>
+                <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation" style="padding: 0px;">
+                        <div class="input-group">
+                            <input id="search_hash" style="font-size: 12px" type="text" class="form-control" placeholder="검색 키워드를 입력하세요!">
+                            <span class="input-group-btn">
+                                <button onclick="execSearch()" style="width: 30px; height: 30px; padding: 0px;" class="btn btn-secondary" type="button"><i style="margin: 0px;" class="fa fa-search" aria-hidden="true"></i></button>
                             </span>
                     </div>
                     <div class="navbar-brand" style="padding: 0px; margin-bottom: 0px; margin-top: 0px;">
                         <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+
                             <strong class="is-sparta"
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
                                     style="color:black" class="fa fa-list" aria-hidden="true"></i></strong>
@@ -221,6 +217,7 @@
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
                                     style="color:darkblue" class="fa fa-pencil-square-o"
                                     aria-hidden="true"></i></strong>
+
                         </a>
                         <a class="navbar-item" href="/like_list"
                            style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
@@ -236,7 +233,9 @@
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i style="color:gray"
                                                                                                    class="fa fa-user"
                                                                                                    aria-hidden="true"></i></strong>
+
                         </a>
+
 
                     </div>
                     <a class="login" href="/" style="margin-right: 20px">
@@ -247,6 +246,7 @@
                 </nav>
             </header>
             <main>
+
                 <section class="list_sec">
                     <div id="sort_box" class="container">
                         <span id="new" onclick="get_posts('new')" class="sort_item sort_hidden">게시일&uarr;</span>
@@ -299,6 +299,7 @@
                                                 더보기
                                             </button>
                                         </p>
+
                                         <div class="img_group">
                                             {% for img in post['s3_image_list'] %}
                                                 <div class="img_frame">

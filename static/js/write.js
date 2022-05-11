@@ -77,7 +77,7 @@ $(function(){
     });
 })
 
-function post() {
+function post(option = ["insert", ""]) {
     const textArea = $('#writeform > textarea');
     let today = new Date().toISOString();
 
@@ -89,6 +89,8 @@ function post() {
     const form = new FormData();
     form.append("text", textArea.val());
     form.append("date", today);
+    form.append("option", option[0]);
+    if (option.length > 1) form.append("post_id", option[1]);
 
     if (images.length) {
         let i = 0;

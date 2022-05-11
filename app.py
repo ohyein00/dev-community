@@ -41,10 +41,9 @@ def check_user_id():
 
 @app.route('/')
 def main():
-    # 메인에서 바로 피드 출력\
-    posts = list(db.post_data.find({}).sort("date", -1).limit(20))
+    # 메인에서 바로 피드 출력
+    posts = list(db.post_data.find({}).sort("date", -1).limit(10))
     user_id = check_user_id()
-
     for post in posts:
         post["_id"] = str(post["_id"])
         post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
@@ -68,6 +67,9 @@ def main():
 
 @app.route('/write')
 def write():
+    if len(request.args) > 0:
+        print(request.args)
+
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
@@ -143,8 +145,36 @@ def check_dup_nickname():
 
 @app.route('/like_list')
 def like_list():
-    return render_template("like_list.html")
-
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        like_list = list(db.likes.find({"username": payload["id"]}).sort("_id", -1).limit(10))
+        posts = list();
+        for like in like_list:
+            temp = db.post_data.find_one({"_id": ObjectId(like["post_id"])})
+            if temp is not None:
+                posts.append(temp)
+        # posts = list(db.post_data.find({ "$or": [{"_id":"627a7d829f7832603689b329"},{"_id":"627a8114ada74ce8b7468720"},{"_id":"627b06ca1d2c7f973e5b4d5f"}]}).sort("date", -1).skip(count).limit(3))
+        posts_like = list()
+        for post in posts:
+            post["_id"] = str(post["_id"])
+            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
+            post["heart_by_me"] = bool(
+                db.likes.find_one({"post_id": post["_id"], "username": payload["id"]}))
+            if (post["heart_by_me"]):
+                image = []
+                if len(post['img_ids']) > 0:
+                    for img_id in post['img_ids']:
+                        image.append(get_img_file(ObjectId(img_id)))
+                post["s3_image_list"] = image
+                post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
+                post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+                for comment in post["comment_list"]:
+                    comment["_id"] = str(comment["_id"])
+                posts_like.append(post)
+        return render_template("like_list.html" ,posts=posts_like)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home"))
 
 @app.route('/profile')
 def profile():
@@ -165,6 +195,9 @@ def posting():
 
         text_receive = request.form['text']
         date_receive = request.form['date']
+        option_receive = request.form['option']
+        if request.form['post_id'] != "":
+            post_id_receive = request.form['post_id']
 
         pattern = '#([0-9a-zA-Z가-힣]*)'
         find_hash = re.compile(pattern)
@@ -176,15 +209,18 @@ def posting():
                 img_id = fs.put(request.files[file])
                 img_ids.append(str(img_id))
 
-        db.post_data.insert_one({
-            "username": user_info['username'],
-            "profile_name": user_info["nickname"],
-            "profile_placeholder": user_info["img"],
-            'date': date_receive,
-            'text': text_receive,
-            'hash_tags': hash_tags,
-            'img_ids': img_ids
-        })
+        if option_receive == 'update':
+            db.post_data.update_one({'_id': post_id_receive}, {'$set': {'text': text_receive, 'img_ids': img_ids}})
+        else:
+            db.post_data.insert_one({
+                "username": user_info['username'],
+                "profile_name": user_info["nickname"],
+                "profile_placeholder": user_info["img"],
+                'date': date_receive,
+                'text': text_receive,
+                'hash_tags': hash_tags,
+                'img_ids': img_ids
+            })
 
         return jsonify({"result": "success", 'msg': '포스팅 성공'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
@@ -216,22 +252,23 @@ def comment_list():
 
 @app.route("/get_posts", methods=['GET'])
 def get_posts():
+    count = int(request.args.get("count"))
     token_receive = request.cookies.get('mytoken')
     sort_option = request.args['sortOption']
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
 
         if sort_option == 'old':
-            posts = list(db.post_data.find({}).sort("date", 1).limit(20))
+            posts = list(db.post_data.find({}).sort("date", 1).skip(count).limit(3))
         else:
-            posts = list(db.post_data.find({}).sort("date", -1).limit(20))
+            posts = list(db.post_data.find({}).sort("date", -1).skip(count).limit(3))
 
 
         for post in posts:
             post["_id"] = str(post["_id"])
-            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
+            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
             post["heart_by_me"] = bool(
-                db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": payload["id"]}))
+                db.likes.find_one({"post_id": post["_id"], "username": payload["id"]}))
 
             image = []
             if len(post['img_ids']) > 0:
@@ -252,16 +289,23 @@ def get_posts():
 
 @app.route("/get_posts_like", methods=['GET'])
 def get_posts_like():
+    count = int(request.args.get("count"))
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        posts = list(db.post_data.find({}).sort("date", -1).limit(20))
+        like_list = list(db.likes.find({"username": payload["id"]}).sort("_id", -1).skip(count).limit(3))
+        posts = list();
+        for like in like_list:
+            temp = db.post_data.find_one({"_id": ObjectId(like["post_id"])})
+            if temp is not None:
+                posts.append(temp)
+        #posts = list(db.post_data.find({ "$or": [{"_id":"627a7d829f7832603689b329"},{"_id":"627a8114ada74ce8b7468720"},{"_id":"627b06ca1d2c7f973e5b4d5f"}]}).sort("date", -1).skip(count).limit(3))
         posts_like = list()
         for post in posts:
             post["_id"] = str(post["_id"])
-            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
+            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
             post["heart_by_me"] = bool(
-                db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": payload["id"]}))
+                db.likes.find_one({"post_id": post["_id"], "username": payload["id"]}))
             if(post["heart_by_me"]):
                 image = []
                 if len(post['img_ids']) > 0:
@@ -277,6 +321,30 @@ def get_posts_like():
         return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts_like})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
+
+
+@app.route("/get_guest_posts", methods=['GET'])
+def get_guest_posts():
+    count = int(request.args.get("count"))
+    posts = list(db.post_data.find({}).sort("date", -1).skip(count).limit(3))
+
+    for post in posts:
+        post["_id"] = str(post["_id"])
+        post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
+        post["heart_by_me"] = bool(
+            db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": "GUEST"}))
+
+        image = []
+        if len(post['img_ids']) > 0:
+            for img_id in post['img_ids']:
+                image.append(get_img_file(ObjectId(img_id)))
+        post["s3_image_list"] = image
+        post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
+        post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+        for comment in post["comment_list"]:
+            comment["_id"] = str(comment["_id"])
+    # 포스팅 목록 받아오기
+    return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
 
 
 @app.route('/update_like', methods=['POST'])
