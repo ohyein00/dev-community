@@ -76,6 +76,7 @@ function get_posts(count,sortOption = "new") {
                     let image_temp = ``;
                     let comment_temp = ``;
                     let hash_temp = ``;
+                    const postId = post['_id'];
                     for (const file of image_list) {
                         let temp = `<div class="img_frame">
                                             <img src="data:image;base64, ${file}"/></li>
@@ -123,6 +124,10 @@ function get_posts(count,sortOption = "new") {
                                         <p class="feed_info">
                                             <span class="time">${time_before}</span>
                                             <span class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
+                                            ${post['username'] == USER_NAME
+                                                ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
+                                                   <span onclick="postDelete('${postId}')" class="info_unit contour">삭제</span>`
+                                                : ``}
                                         </p>
 
                                     </div>

@@ -44,6 +44,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Devom - 개발자 커뮤니티</title>
     <script>
+        {% if session['username'] %}
+        const USER_NAME = '{{ session['username'] }}';
+        {% endif %}
         $(document).ready(function () {
             let token = $.cookie('mytoken');
             if (token !== undefined) {
@@ -54,7 +57,6 @@
                 $('.login').prop('href', "/login")
             }
             infinity_scroll_list(10);
-
         })
 
         // 검색
@@ -89,6 +91,7 @@
                             let comment_list = post["comment_list"];
                             let image_temp = ``;
                             let comment_temp = ``;
+                            const postId = post['_id'];
                             console.log(comment_list)
                             for (const file of image_list) {
                                 let temp = `<div class="img_frame">
@@ -132,6 +135,10 @@
                                         <p class="feed_info">
                                             <span class="time">${time_before}</span>
                                             <span class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
+                                            ${post['username'] == USER_NAME
+                                                ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
+                                                   <span onclick="postDelete('${postId}')" class="info_unit contour">삭제</span>`
+                                                : ``}
                                         </p>
 
                                     </div>
@@ -179,8 +186,8 @@
                 }
             })
         }
-
     </script>
+
 </head>
 
 <body>
@@ -259,8 +266,8 @@
 
                 <section class="list_sec">
                     <div id="sort_box" class="container">
-                        <span id="new" onclick="sort('new')" class="sort_item">게시일&uarr;</span>
-                        <span id="old" onclick="sort('old')" class="sort_item">게시일&darr;</span>
+                        <span id="new" onclick="sort('new')" class="sort_item sort_hidden">게시일&uarr;</span>
+                        <span id="old" onclick="sort('old')" class="sort_item text_red">게시일&darr;</span>
                         <span id="like" onclick="sort('like')" class="sort_item">좋아요순</span>
                     </div>
                     <div id="post-box" class="container">
@@ -281,8 +288,8 @@
                                                 <span class="info_unit contour time">시간</span>
                                                 <span class="info_unit contour">좋아요 {{ post['count_heart'] }}</span>
                                                 {% if user_id == post["username"] %}
-                                                    <span class="info_unit contour">수정</span>
-                                                    <span class="info_unit contour">삭제</span>
+                                                    <span class="info_unit contour"><a href="/write?post_id={{ post['_id'] }}">수정</a></span>
+                                                    <span onclick="postDelete('{{ post['_id'] }}')" class="info_unit contour">삭제</span>
                                                 {% else %}
                                                 {% endif %}
                                             </p>
