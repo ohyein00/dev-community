@@ -48,7 +48,6 @@ function comment(id) {
 }
 
 
-
 function get_posts() {
     $("#post-box").empty()
     let host_url = "";
