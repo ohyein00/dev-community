@@ -303,7 +303,7 @@
                                                 <span class="info_unit contour">좋아요 {{ post['count_heart'] }}</span>
                                                 {% if user_id == post["username"] %}
                                                     <span class="info_unit contour"><a href="/write?post_id={{ post['_id'] }}">수정</a></span>
-                                                    <span onclick="postDelete('{{ post['_id'] }}')" class="info_unit contour">삭제</span>
+                                                    <span onclick="postDelete('{{ post['_id'] }}')" class="info_unit contour post_delete">삭제</span>
                                                 {% else %}
                                                 {% endif %}
                                             </p>

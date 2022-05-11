@@ -154,7 +154,7 @@ const sort = opt => {
                                             <span class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
                                             ${post['username'] == USER_NAME
                                                 ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
-                                                   <span onclick="postDelete('${postId}')" class="info_unit contour">삭제</span>`
+                                                   <span onclick="postDelete('${postId}')" class="info_unit contour post_delete">삭제</span>`
                                                 : ``}
                                         </p>
 
