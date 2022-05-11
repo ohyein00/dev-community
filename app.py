@@ -37,6 +37,9 @@ def main():
 
 @app.route('/write')
 def write():
+    if len(request.args) > 0:
+        print(request.args)
+
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
@@ -152,6 +155,9 @@ def posting():
 
         text_receive = request.form['text']
         date_receive = request.form['date']
+        option_receive = request.form['option']
+        if request.form['post_id'] != "":
+            post_id_receive = request.form['post_id']
 
         pattern = '#([0-9a-zA-Z가-힣]*)'
         find_hash = re.compile(pattern)
@@ -163,15 +169,18 @@ def posting():
                 img_id = fs.put(request.files[file])
                 img_ids.append(str(img_id))
 
-        db.post_data.insert_one({
-            "username": user_info['username'],
-            "profile_name": user_info["nickname"],
-            "profile_placeholder": user_info["img"],
-            'date': date_receive,
-            'text': text_receive,
-            'hash_tags': hash_tags,
-            'img_ids': img_ids
-        })
+        if option_receive == 'update':
+            db.post_data.update_one({'_id': post_id_receive}, {'$set': {'text': text_receive, 'img_ids': img_ids}})
+        else:
+            db.post_data.insert_one({
+                "username": user_info['username'],
+                "profile_name": user_info["nickname"],
+                "profile_placeholder": user_info["img"],
+                'date': date_receive,
+                'text': text_receive,
+                'hash_tags': hash_tags,
+                'img_ids': img_ids
+            })
 
         return jsonify({"result": "success", 'msg': '포스팅 성공'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
