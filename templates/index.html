@@ -36,6 +36,8 @@
     <link href='{{ url_for("static", filename="css/reset.css") }}' rel="stylesheet">
     <link href='{{ url_for("static", filename="css/index.css") }}' rel="stylesheet">
     <link href='{{ url_for("static", filename="css/ui.css") }}' rel="stylesheet">
+    <script src="https://unpkg.com/fxjs/dist/fx.js"></script>
+    <script>const { L, C } = window._;</script>
     <script src='{{ url_for("static", filename="js/index.js") }}'></script>
     <script src='{{ url_for("static", filename="js/like.js") }}'></script>
     <meta charset="utf-8">
@@ -194,6 +196,7 @@
                                 <button style="width: 30px; height: 30px; padding: 0px;" class="btn btn-secondary"
                                         type="button"><i style="margin: 0px;" class="fa fa-search"
                                                          aria-hidden="true"></i></button>
+
                         </span>
                     </div>
                 </nav>
@@ -207,21 +210,22 @@
                                         class="btn btn-secondary" type="button"><i style="margin: 0px;"
                                                                                    class="fa fa-search"
                                                                                    aria-hidden="true"></i></button>
-                            </span>
-                    </div>
-                    <div class="navbar-brand" style="padding: 0px; margin-bottom: 0px; margin-top: 0px;">
-                        <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
 
-                            <strong class="is-sparta"
-                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
-                                    style="color:black" class="fa fa-list" aria-hidden="true"></i></strong>
-                        </a>
-                        <a class="navbar-item" href="/write"
-                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
-                            <strong class="is-sparta"
-                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
-                                    style="color:darkblue" class="fa fa-pencil-square-o"
-                                    aria-hidden="true"></i></strong>
+                            </span>
+                            </div>
+                            <div class="navbar-brand" style="padding: 0px; margin-bottom: 0px; margin-top: 0px;">
+                                <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+
+                                    <strong class="is-sparta"
+                                            style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
+                                            style="color:black" class="fa fa-list" aria-hidden="true"></i></strong>
+                                </a>
+                                <a class="navbar-item" href="/write"
+                                   style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+                                    <strong class="is-sparta"
+                                            style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
+                                            style="color:darkblue" class="fa fa-pencil-square-o"
+                                            aria-hidden="true"></i></strong>
 
                         </a>
                         <a class="navbar-item" href="/like_list"
@@ -238,30 +242,31 @@
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i style="color:gray"
                                                                                                    class="fa fa-user"
                                                                                                    aria-hidden="true"></i></strong>
+                          
 
-                        </a>
+                                </a>
 
 
-                    </div>
-                    <a class="login" href="/" style="margin-right: 20px">
-                        <small class="is-sparta"
-                               style="font-family: 'Black Han Sans', sans-serif;font-size: small;">로그인</small>
-                    </a>
+                            </div>
+                            <a class="login" href="/" style="margin-right: 20px">
+                                <small class="is-sparta"
+                                       style="font-family: 'Black Han Sans', sans-serif;font-size: small;">로그인</small>
+                            </a>
 
-                </nav>
+                        </nav>
             </header>
             <main>
 
                 <section class="list_sec">
                     <div id="sort_box" class="container">
-                        <span id="new" onclick="get_posts('new')" class="sort_item sort_hidden">게시일&uarr;</span>
-                        <span id="old" onclick="get_posts('old')" class="sort_item text_red">게시일&darr;</span>
-                        <span id="like" onclick="get_posts('like')" class="sort_item">좋아요순</span>
+                        <span id="new" onclick="sort('new')" class="sort_item">게시일&uarr;</span>
+                        <span id="old" onclick="sort('old')" class="sort_item">게시일&darr;</span>
+                        <span id="like" onclick="sort('like')" class="sort_item">좋아요순</span>
                     </div>
                     <div id="post-box" class="container">
                         <!-- 피드 반복 -->
                         {% for post in posts %}
-                            <div class="feed_frame" id="{{ post['_id'] }}">
+                            <div class="feed_frame" id="{{ post['_id'] }}" data-postinfo="{{ post }}">
                                 <article class="feed">
                                     <div class="media user_info">
                                         <figure class="image user_img">
