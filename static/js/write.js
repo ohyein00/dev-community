@@ -5,7 +5,15 @@ $(function(){
         $("#file_preview > div:nth-child(1)").html('');
         images = [];
         images = e.target.files;
-        images = images.slice(4);
+
+        //limit 4
+        const tmp = [];
+        if (images[0]) tmp.push(images[0]);
+        if (images[1]) tmp.push(images[1]);
+        if (images[2]) tmp.push(images[2]);
+        if (images[3]) tmp.push(images[3]);
+        images = tmp;
+
         let elements = '';
         let srcs = [];
 
