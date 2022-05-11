@@ -278,7 +278,7 @@
                                                 <small style="font-size: xx-small">{{ post['username'] }}</small>
                                             </p>
                                             <p class="feed_info">
-                                                <span class="info_unit contour time">시간</span>
+                                                <span class="info_unit contour time">{{ post["time_difference"] }} 전</span>
                                                 <span class="info_unit contour">좋아요 {{ post['count_heart'] }}</span>
                                                 {% if user_id == post["username"] %}
                                                     <span class="info_unit contour">수정</span>
@@ -304,10 +304,15 @@
                                     </div>
                                     <div class="feed_detail">
                                         <p class="detail has_more">
-                                            <span class="txt">{{ post["text"] }}</span>
-                                            <button class="more_btn">
-                                                더보기
-                                            </button>
+                                            {% if post["cut_text"] %}
+                                                <span class="txt">{{ post["cut_text"] }}</span>
+                                                <button onclick="more_text(event,'{{ post["_id"] }}')" class="more_btn">
+                                                    더보기
+                                                </button>
+                                            {% else %}
+                                                <span class="txt">{{ post["text"] }}</span>
+                                            {% endif %}
+
                                         </p>
 
                                         <div class="img_group">
@@ -334,7 +339,8 @@
                                                     <p class="user_name">
                                                         <strong>{{ comment["profile_name"] }}</strong>
                                                         <small style="font-size: xx-small">{{ comment["username"] }}</small>
-                                                        <small class="time contour left">시간</small>
+                                                        <small class="time contour left">{{ comment["time_difference"] }}
+                                                            전</small>
                                                     </p>
                                                     <p class="user_comment">{{ comment["comment"] }}</p>
                                                 </div>
@@ -344,8 +350,9 @@
                                     {% if user_id %}
                                         <div class="input_wrap">
                                             <div class="input_area gray_type is_flex">
+
                                                 <label class="{{ post['_id'] }}">
-                                                    <input type="text" placeholder="댓글을 입력하세요" maxlength="100">
+                                                    <input type="text" placeholder="댓글을 입력하세요" maxlength="100" minlength ="1">
                                                 </label>
                                                 <button type="submit" onclick="comment('{{ post['_id'] }}')">
                                                     입력

@@ -1,7 +1,4 @@
 $(function () {
-    show_list()
-
-
     $('#new').click(function() {
         $('.sort_item').removeClass('text_red');
         $('#old').addClass('text_red');
@@ -20,15 +17,20 @@ $(function () {
     });
 
 })
-
-function show_list() {
+const more_text = (event,postId) => {
+    console.log(event.target)
     $.ajax({
-        type: 'GET',
-        url: '/list',
-        data: {},
+        type: "GET",
+        url: "/get_more_txt",
+        data: {
+            id:postId
+        },
         success: function (response) {
+            $(event.target).siblings('span.txt').text(response.data)
+            $(event.target).hide()
         }
     })
+
 }
 
 const sortFeed = opt => {
