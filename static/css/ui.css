@@ -80,8 +80,8 @@
     flex-wrap: wrap;
     margin: 15px -5px 0;
 }
-.hash_item{
-    margin-left: 15px;
+.hash_item + .hash_item{
+    margin-left: 10px;
 }
 .feed_detail .img_group .img_frame {
     display: flex;
@@ -105,7 +105,7 @@
 /* feed_comment */
 .feed_comment {
     width: 100%;
-    margin-top: 20px;
+    margin-top: 10px;
     padding-top: 20px;
     border-top: 1px solid #dcdcdc;
 }
@@ -113,6 +113,7 @@
 .feed_comment .comment_frame {
     display: flex;
     align-items: center;
+    margin-top:10px;
 }
 
 .feed_comment .comment_frame .user_img {
@@ -159,8 +160,16 @@
     border:1px solid #dcdcdc;
     border-radius: 100%;
 }
+.hash_item small{
+    font-size: 11px;
+    color: #666;
+    background: #efefef;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
 /*left_bar*/
-.contour.left::before{
+.contour + .contour::before{
     content:'';
     display:inline-block;
     margin:0 5px 0 2px;
@@ -216,4 +225,13 @@
 /*is_flex*/
 .is_flex{
     display:flex;
+}
+
+/*no_data*/
+.no_data{
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    color: #666;
+    padding: 50px 0;
 }
