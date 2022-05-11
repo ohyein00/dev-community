@@ -55,7 +55,6 @@ function get_posts(sortOption = "new") {
     } else {
         host_url = "get_guest_posts";
     }
-
     $.ajax({
         type: "GET",
         url: `/${host_url}`,
@@ -69,7 +68,6 @@ function get_posts(sortOption = "new") {
                     let image_list = post["s3_image_list"];
                     let comment_list = post["comment_list"];
                     let hash_list = post['hash_tags']
-
                     let image_temp = ``;
                     let comment_temp = ``;
                     let hash_temp = ``;
@@ -78,7 +76,6 @@ function get_posts(sortOption = "new") {
                                             <img src="data:image;base64, ${file}"/></li>
                                         </div>`;
                         image_temp = image_temp + temp;
-
                     }
                     for (let j = 0; j < comment_list.length; j++) {
                         let time_post = new Date(comment_list[j]["date"])

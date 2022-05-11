@@ -41,9 +41,10 @@ def check_user_id():
 
 @app.route('/')
 def main():
-    # 메인에서 바로 피드 출력
+    # 메인에서 바로 피드 출력\
     posts = list(db.post_data.find({}).sort("date", -1).limit(20))
     user_id = check_user_id()
+
     for post in posts:
         post["_id"] = str(post["_id"])
         post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
@@ -54,14 +55,15 @@ def main():
         post["s3_image_list"] = image
         post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
         post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+        for comment in post["comment_list"]:
+            comment["_id"] = str(comment["_id"])
         #좋아요 유저체크 분기
         if bool(user_id) :
             post["heart_by_me"] = bool(
                 db.likes.find_one({"post_id": post["_id"],"username": user_id}))
         else:
             post["heart_by_me"] = False
-        for comment in post["comment_list"]:
-            comment["_id"] = str(comment["_id"])
+
     return render_template('index.html', posts=posts, user_id=user_id)
 
 @app.route('/write')
