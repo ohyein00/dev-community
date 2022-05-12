@@ -119,7 +119,7 @@
 .feed_detail .img_group .img_frame:nth-child(1):last-child {
     width: 100%;
     overflow: hidden;
-    padding-bottom:55%;
+    padding-bottom: 55%;
 }
 
 .feed_detail .img_group .img_frame img {
@@ -489,4 +489,10 @@
     font-size: 14px;
     font-weight: bold;
     color: #333;
+}
+
+.banner_side {
+    position: absolute;
+    right: -150px;
+    top: 150px;
 }
