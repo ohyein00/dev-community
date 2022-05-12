@@ -1,4 +1,10 @@
 *.pyc
 __pycache__/
+<<<<<<< HEAD
 .idea
+=======
+.error_log
+.idea
+venv
+>>>>>>> 0ae746d7bf85f539a5744ff0f25bafe9068c67a1
 error.log
