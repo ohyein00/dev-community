@@ -1,29 +1,39 @@
 $(function () {
-    $('#new').click(function() {
+    $('#new').click(function () {
         $('.sort_item').removeClass('text_red');
         $('#old').addClass('text_red');
         $('#old').removeClass('sort_hidden');
         $('#new').addClass('sort_hidden');
     });
-    $('#old').click(function() {
+    $('#old').click(function () {
         $('.sort_item').removeClass('text_red');
         $('#new').addClass('text_red');
         $('#new').removeClass('sort_hidden');
         $('#old').addClass('sort_hidden');
     });
-    $('#like').click(function() {
+    $('#like').click(function () {
         $('.sort_item').removeClass('text_red');
         $('#like').addClass('text_red');
     });
+    let token = $.cookie('mytoken');
+    if (token !== undefined) {
+        $(".login > small").text("로그아웃");
+        $('.login').prop('href', 'javascript:void(0)')
+        $('.login').attr('onclick', 'sign_out()')
+    } else {
+        $(".login > small").text("로그인");
+        $('.login').prop('href', "/login")
+        $('.login').removeAttr('onclick')
+    }
 
 })
-const more_text = (event,postId) => {
+const more_text = (event, postId) => {
     console.log(event.target)
     $.ajax({
         type: "GET",
         url: "/get_more_txt",
         data: {
-            id:postId
+            id: postId
         },
         success: function (response) {
             $(event.target).siblings('span.txt').text(response.data)
@@ -47,19 +57,19 @@ const sortFeed = opt => {
     const sortDataObj = _.curry((opt, iter) => _.go(
         iter,
         opt == "new"
-        ? _.sortBy(v => _.go(
-            v,
-            getDataObj,
-            _.map(v => v['date']))):
-        opt == "old"
-        ? _.sortByDesc(v => _.go(
-            v,
-            getDataObj,
-            _.map(v => v['date']))):
-         _.sortBy(v => _.go(
-            v,
-            getDataObj,
-            _.map(v => v['count_heart'])))
+            ? _.sortBy(v => _.go(
+                v,
+                getDataObj,
+                _.map(v => v['date']))) :
+            opt == "old"
+                ? _.sortByDesc(v => _.go(
+                    v,
+                    getDataObj,
+                    _.map(v => v['date']))) :
+                _.sortBy(v => _.go(
+                    v,
+                    getDataObj,
+                    _.map(v => v['count_heart'])))
     ));
 
     const elements = _.go(
@@ -114,7 +124,7 @@ const sort = opt => {
                     for (let j = 0; j < comment_list.length; j++) {
                         let time_post = new Date(comment_list[j]["date"])
                         let time_before = time2str(time_post)
-                        let temp= `<div class="comment_frame" id="${comment_list[j]["_id"]}">
+                        let temp = `<div class="comment_frame" id="${comment_list[j]["_id"]}">
                                         <figure class="user_img">
                                             <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
                                         </figure>
@@ -134,7 +144,7 @@ const sort = opt => {
                         let temp = `<div class="hash_item">
                                             <a><small >#${hash_list[j]}</small></a>
                                         </div>`;
-                        hash_temp= hash_temp+temp;
+                        hash_temp = hash_temp + temp;
                     }
                     let time_post = new Date(post["date"])
                     let time_before = time2str(time_post)
@@ -153,9 +163,9 @@ const sort = opt => {
                                             <span class="time">${time_before}</span>
                                             <span class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
                                             ${post['username'] == USER_NAME
-                                                ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
+                        ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
                                                    <span onclick="postDelete('${postId}')" class="info_unit contour post_delete">삭제</span>`
-                                                : ``}
+                        : ``}
                                         </p>
 
                                     </div>
@@ -222,8 +232,20 @@ const postDelete = id => {
     })
 }
 
+const commentDelete = id => {
+    $.ajax({
+        type: 'POST',
+        url: '/comment_delete',
+        data: {comment_id: id},
+        success: function (res) {
+            window.location.reload();
+        }
+    })
+}
+
 function sign_out() {
     $.removeCookie('mytoken', {path: '/'});
     alert('로그아웃!')
     window.location.href = "/"
+
 }

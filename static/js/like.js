@@ -61,7 +61,9 @@ function get_posts(count, sortOption = "new") {
     let posts_list = new Array();
     let host_url = "";
     let token = $.cookie('mytoken');
+
     $.cookie('count', count, {path: '/'});
+
     if (token !== undefined) {
         host_url = "get_posts";
     } else {
@@ -98,6 +100,7 @@ function get_posts(count, sortOption = "new") {
                     for (let j = 0; j < comment_list.length; j++) {
                         let time_post = new Date(comment_list[j]["date"])
                         let time_before = time2str(time_post)
+                          console.log(response["session"],comment_list[j]['username'])
                         let temp = `<div class="comment_frame" id="${comment_list[j]["_id"]}">
                                         <figure class="user_img">
                                             <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
@@ -107,6 +110,11 @@ function get_posts(count, sortOption = "new") {
                                                 <strong>${comment_list[j]['profile_name']}</strong> 
                                                 <small style="font-size: xx-small">@${comment_list[j]['username']}</small>
                                                 <small class="time contour left">${time_before}</small>
+                                                 ${response["session"] === comment_list[j]['username'] ?
+                                                                `<small class="feed_info">
+                                                                <span onclick="commentDelete('${comment_list[j]["_id"]}')"
+                                                                          class="time contour deleter">| 삭제</span>
+                                                                </small>` : ``}
                                             </p>
                                             <p class="user_comment">${comment_list[j]['comment']}</p>
                                         </div>
@@ -185,7 +193,7 @@ function get_posts(count, sortOption = "new") {
                                 </div>
                             </div>
                         </div>`
-                    if (post["count_comment"] >3){
+                    if (post["count_comment"] > 3) {
                         html_temp = `<div class="feed_frame" id="${post['_id']}">
                             <article class="feed">
                                 <div class="media user_info">
@@ -262,6 +270,7 @@ function get_posts(count, sortOption = "new") {
 
 function get_posts_like(count) {
     let posts_list = new Array();
+    $.cookie('count', count, {path: '/'});
     $.ajax({
         type: "GET",
         url: `/get_posts_like`,
@@ -288,6 +297,7 @@ function get_posts_like(count) {
                     for (let j = 0; j < comment_list.length; j++) {
                         let time_post = new Date(comment_list[j]["date"])
                         let time_before = time2str(time_post)
+                        console.log(response["session"],comment_list[j]["_id"])
                         let temp = `<div class="comment_frame" id="${comment_list[j]["_id"]}">
                                         <figure class="user_img">
                                             <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
@@ -297,6 +307,11 @@ function get_posts_like(count) {
                                                 <strong>${comment_list[j]['profile_name']}</strong> 
                                                 <small style="font-size: xx-small">@${comment_list[j]['username']}</small>
                                                 <small class="time contour left">${time_before}</small>
+                                                ${response["session"] === comment_list[j]['username'] ?
+                                                                `<small class="feed_info">
+                                                                <span onclick="commentDelete('${comment_list[j]["_id"]}')"
+                                                                          class="time contour deleter">| 삭제</span>
+                                                                </small>` : ``}
                                             </p>
                                             <p class="user_comment">${comment_list[j]['comment']}</p>
                                         </div>
@@ -368,7 +383,15 @@ function get_posts_like(count) {
     })
     return posts_list
 }
+function location_change(page){
+    if (USER_NAME != "Guest"){
+        $.cookie('count', 10, {path: '/'});
+        window.location.href =page;
+    }else {
+        alert("로그인이 필요한 페이지 입니다.");
+    }
 
+}
 
 function toggle_like(post_id, type) {
     let token = $.cookie('mytoken');
