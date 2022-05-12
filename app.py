@@ -12,7 +12,6 @@ from pymongo import MongoClient
 from datetime import datetime, timedelta, timezone
 import dateutil.parser
 import certifi
-from logging.config import dictConfig
 
 
 ca = certifi.where()
@@ -26,30 +25,6 @@ app.secret_key = 'SPARTA'
 
 SECRET_KEY = 'SPARTA'
 fs = gridfs.GridFS(db)
-
-
-dictConfig({
-    'version': 1,
-    'formatters': {
-        'default': {
-            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
-        }
-    },
-    'handlers': {
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'error.log',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
-            'formatter': 'default',
-        },
-    },
-    'root': {
-        'level': 'INFO',
-        'handlers': ['file']
-    }
-})
 
 
 def get_img_file(img_id):
