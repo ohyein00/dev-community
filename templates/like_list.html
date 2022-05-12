@@ -54,10 +54,12 @@
 
             if (token !== undefined) {
                 $(".login > small").text("로그아웃");
-                $('.login').prop('href', "/logout")
+                $('.login').prop('href', 'javascript:void(0)')
+                $('.login').attr('onclick', 'sign_out()')
             } else {
                 $(".login > small").text("로그인");
                 $('.login').prop('href', "/login")
+                $('.login').removeAttr('onclick')
             }
             infinity_scroll_like(10);
         })

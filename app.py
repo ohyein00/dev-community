@@ -548,10 +548,6 @@ def post_by_hash():
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
 
-@app.route('/logout', methods=['GET'])
-def logout():
-    return redirect("/")
-
 @app.route("/sort", methods=['GET'])
 def sort():
     token_receive = request.cookies.get('mytoken')
