@@ -108,7 +108,6 @@ def main():
     # 메인에서 바로 피드 출력
     token_receive = request.cookies.get('mytoken')
     count_receive = request.cookies.get('count')
-    print(token_receive)
     count = 10
     if count_receive is not None:
         count = int(count_receive)
@@ -250,7 +249,6 @@ def sign_in():
             'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)  # 로그인 24시간 유지
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
-        print(token)
         session['username'] = username_receive
         return jsonify({'result': 'success', 'token': token})
     # 찾지 못하면
@@ -295,7 +293,6 @@ def check_dup_nickname():
 @app.route('/like_list')
 def like_list():
     token_receive = request.cookies.get('mytoken')
-    print(token_receive)
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         like_list = list(db.likes.find({"username": payload["id"]}).sort("_id", -1).limit(10))
@@ -351,7 +348,6 @@ def like_list():
 
         return render_template("like_list.html", posts=posts, user_id=user_id, my_info=my_info)
     except Exception as ex:
-        print(ex)
         return redirect("/")
 
 
@@ -676,8 +672,7 @@ def post_hash():
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
-        hash_tags = db.users.find_one({"username": user_info['username']})
-        print(hash_tags)
+        hash_tags = db.users.find_one({"username": user_info['username']})["hash_tags"]
         return jsonify({"result": "success", "msg": "해쉬태그를 가져왔습니다.", "hash_tags": hash_tags})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
@@ -693,7 +688,7 @@ def post_by_all():
         user_info = db.users.find_one({"username": payload["id"]})
         posts = list(
             db.post_data.find({"username": user_info['username']}).sort("date", -1).limit(
-                3))
+                20))
 
         for post in posts:
             post["_id"] = str(post["_id"])
@@ -840,7 +835,6 @@ def guest_sort():
 @app.route("/post_delete", methods=['POST'])
 def post_delete():
     post_id = request.form['post_id']
-    print(post_id)
     db.post_data.delete_one({'_id': ObjectId(post_id)})
     return jsonify({"result": "success"})
 
@@ -848,7 +842,6 @@ def post_delete():
 @app.route("/comment_delete", methods=['POST'])
 def comment_delete():
     comment_id = request.form['comment_id']
-    print(comment_id)
     db.comment.delete_one({'_id': ObjectId(comment_id)})
     return jsonify({"result": "success"})
 
