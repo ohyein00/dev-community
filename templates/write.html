@@ -56,6 +56,7 @@
         $(function () {
             const URLSearch = new URLSearchParams(location.search).get('post_id');
             if (URLSearch) {
+                $('#write_btn_wrap').html(`<button onclick="post('update', '${URLSearch}')" class="w-full rounded-md h-10 text-white bg-red-400">수정 완료</button>`);
                 $.ajax({
                     type: "GET",
                     url: "/get_images",
@@ -173,7 +174,7 @@
                                placeholder="검색 키워드를 입력하세요!">
                         <span class="input-group-btn">
                                 <button onclick="execSearch()" style="width: 30px; height: 30px; padding: 0px;"
-                                        class="btn btn-secondary" type="button"><i style="margin: 0px;"
+                                        class="text-white bg-gray-500 rounded-[10px]" type="button"><i style="margin: 0px;"
                                                                                    class="fa fa-search"
                                                                                    aria-hidden="true"></i></button>
 
