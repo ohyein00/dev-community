@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="59449e27-e9ad-42f3-8569-f8c7f7520a48" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/like_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/like_list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/profile.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +98,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1652332506639</updated>
-      <workItem from="1652332508763" duration="7621000" />
+      <workItem from="1652332508763" duration="9151000" />
     </task>
     <servers />
   </component>
@@ -119,6 +117,6 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/devom$Flask__app_py_.coverage" NAME="Flask (app.py) 커버리지 결과" MODIFIED="1652338135919" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/devom$Flask__app_py_.coverage" NAME="Flask (app.py) 커버리지 결과" MODIFIED="1652341604673" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

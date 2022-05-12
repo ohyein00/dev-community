@@ -357,7 +357,16 @@ def like_list():
 
 @app.route('/profile')
 def profile():
-    return render_template("profile.html")
+    user_id = check_user_id()
+    if bool(user_id):
+        # 내 정보 불러오기
+        my_info = db.users.find_one({'username': user_id})
+        profile_img = get_user_profile(my_info)
+        if profile_img is not False:
+            my_info['edit_my_img'] = profile_img
+    else:
+        my_info = False
+    return render_template("profile.html", user_id=user_id, my_info=my_info)
 
 
 @app.route('/post_content')
@@ -667,7 +676,8 @@ def post_hash():
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
-        hash_tags = db.users.find_one({"username": user_info['username']})['hash_tags']
+        hash_tags = db.users.find_one({"username": user_info['username']})
+        print(hash_tags)
         return jsonify({"result": "success", "msg": "해쉬태그를 가져왔습니다.", "hash_tags": hash_tags})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
@@ -675,7 +685,6 @@ def post_hash():
 
 @app.route("/post/profile/all", methods=['GET'])
 def post_by_all():
-    count = int(request.args.get("count"))
     sort_option = request.args['sortOption']
     token_receive = request.cookies.get('mytoken')
     try:
@@ -684,7 +693,7 @@ def post_by_all():
         user_info = db.users.find_one({"username": payload["id"]})
         posts = list(
             db.post_data.find({"username": user_info['username']}).sort("date", -1).limit(
-                20))
+                3))
 
         for post in posts:
             post["_id"] = str(post["_id"])
