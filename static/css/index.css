@@ -206,3 +206,6 @@ span.info_unit a {
     text-decoration: none;
     color: #4a4a4a;
 }
+.post_delete:hover {
+    cursor: pointer;
+}

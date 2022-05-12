@@ -54,10 +54,12 @@
             let token = $.cookie('mytoken');
             if (token !== undefined) {
                 $(".login > small").text("로그아웃");
-                $('.login').prop('href', "/logout")
+                $('.login').prop('href', 'javascript:void(0)')
+                $('.login').attr('onclick', 'sign_out()')
             } else {
                 $(".login > small").text("로그인");
                 $('.login').prop('href', "/login")
+                $('.login').removeAttr('onclick')
             }
 
             let count = 10
@@ -306,10 +308,10 @@
                                                 <span class="info_unit contour time">{{ post["time_difference"] }} 전</span>
                                                 <span class="info_unit contour">좋아요 {{ post['count_heart'] }}</span>
                                                 {% if user_id == post["username"] %}
-                                                    <span class="info_unit contour updater"><a
-                                                            href="/write?post_id={{ post['_id'] }}">수정</a></span>
-                                                    <span onclick="postDelete('{{ post['_id'] }}')"
-                                                          class="info_unit contour deleter">삭제</span>
+
+                                                    <span class="info_unit contour"><a href="/write?post_id={{ post['_id'] }}">수정</a></span>
+                                                    <span onclick="postDelete('{{ post['_id'] }}')" class="info_unit contour post_delete">삭제</span>
+
                                                 {% else %}
                                                 {% endif %}
                                             </p>

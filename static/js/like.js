@@ -100,7 +100,7 @@ function get_posts(count, sortOption = "new") {
                     for (let j = 0; j < comment_list.length; j++) {
                         let time_post = new Date(comment_list[j]["date"])
                         let time_before = time2str(time_post)
-                          console.log(response["session"],comment_list[j]["_id"])
+                          console.log(response["session"],comment_list[j]['username'])
                         let temp = `<div class="comment_frame" id="${comment_list[j]["_id"]}">
                                         <figure class="user_img">
                                             <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
@@ -145,10 +145,10 @@ function get_posts(count, sortOption = "new") {
                                         <p class="feed_info">
                                             <span class="time">${time_before}</span>
                                             <span class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
-                                            ${post['username'] == response["session"]
-                        ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
-                                                   <span onclick="postDelete('${postId}')" class="info_unit contour">삭제</span>`
-                        : ``}
+                                            ${post['username'] == USER_NAME
+                                                ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
+                                                   <span onclick="postDelete('${postId}')" class="info_unit contour post_delete">삭제</span>`
+                                                : ``}
                                         </p>
 
                                     </div>
