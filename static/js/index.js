@@ -245,7 +245,17 @@ const commentDelete = id => {
 
 function sign_out() {
     $.removeCookie('mytoken', {path: '/'});
-    alert('로그아웃!')
-    window.location.href = "/"
+
+    $.ajax({
+        type: 'GET',
+        url: '/logout',
+        data: {},
+        success: function (res) {
+            console.log(res)
+            alert(res["result"]);
+            window.location.reload();
+        }
+    })
+
 
 }

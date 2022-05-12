@@ -791,6 +791,10 @@ def comment_delete():
     db.comment.delete_one({'_id': ObjectId(comment_id)})
     return jsonify({"result": "success"})
 
+@app.route('/logout', methods=['GET'])
+def logout():
+    session.pop('username', None)
+    return jsonify({"result": "로그아웃!!"})
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
