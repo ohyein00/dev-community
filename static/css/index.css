@@ -209,3 +209,7 @@ span.info_unit a {
 .post_delete:hover {
     cursor: pointer;
 }
+
+.img_frame:hover {
+    cursor: pointer;
+}
