@@ -92,7 +92,7 @@ function post(option = "insert", postId = "") {
     form.append("text", textArea.val());
     form.append("date", today);
     form.append("option", option);
-    if (postId) form.append("post_id", postId);
+    form.append("post_id", postId);
 
     if (images.length) {
         let i = 0;
@@ -108,7 +108,8 @@ function post(option = "insert", postId = "") {
         contentType: false,
         processData: false,
         data: form,
-        success: function (response) {
+        success: function (res) {
+            alert('게시물이 등록되었습니다.')
             window.location.href = '/';
         }
     })

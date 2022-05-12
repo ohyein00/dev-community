@@ -129,7 +129,7 @@ def write():
                                text=text,
                                imgs=imgs)
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return redirect(url_for("home", msg='로그인이 필요한 페이지입니다.'))
+        return redirect(url_for("main"))
 
 @app.route('/get_images', methods=['GET'])
 def get_images():
@@ -261,8 +261,7 @@ def posting():
         text_receive = request.form['text']
         date_receive = request.form['date']
         option_receive = request.form['option']
-        if request.form['post_id'] != "":
-            post_id_receive = request.form['post_id']
+        post_id_receive = request.form['post_id']
 
         pattern = '#([0-9a-zA-Z가-힣]*)'
         find_hash = re.compile(pattern)
