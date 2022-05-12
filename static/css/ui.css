@@ -499,6 +499,16 @@
 }
 #hash_folder .hashbtn{
     padding: 8px 10px;
+    background: #fff;
+    color: #bbb;
+    font-size: 12px;
+    margin-right: 10px;
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    margin-bottom:10px;
+}
+#hash_folder .active{
+    padding: 8px 10px;
     background: #555;
     color: #fff;
     font-size: 12px;

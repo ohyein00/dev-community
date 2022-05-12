@@ -85,7 +85,9 @@
                 alert("로그인 후에 사용하실 수 있습니다.");
                 window.location.href = "/";
             }
+
         })
+
 
         function post_hash() {
             $.ajax({
@@ -95,7 +97,7 @@
                     let hashList = response["hash_tags"];
                     for (let i = 0; i < hashList.length; i++) {
                         console.log(hashList[i]);
-                        let tmp_html = `<button class="hashbtn" onclick='post_by_hash("${hashList[i]}")'>#${hashList[i]}</button>`
+                        let tmp_html = `<button class="hashbtn" onclick='post_by_hash("${hashList[i]}",${i}+2)'>#${hashList[i]}</button>`
                         $('#hash_folder').append(tmp_html);
                     }
                 }
@@ -103,8 +105,10 @@
         }
 
 
-        function post_by_all(sortOption = "new") {
+        function post_by_all(index,sortOption = "new") {
             $('#post-box').empty();
+            $(".hashbtn").removeClass("active");
+            $(`button:nth-child(1)`).addClass("active");
             $.ajax({
                 type: "GET",
                 url: "/post/profile/all",
@@ -309,8 +313,10 @@
         }
 
 
-        function post_by_hash(hash) {
+        function post_by_hash(hash,index) {
             $('#post-box').empty();
+            $(".hashbtn").removeClass("active");
+            $(`button:nth-child(${index})`).addClass("active");
             console.log("hello");
             $.ajax({
                 type: "GET",
@@ -518,7 +524,7 @@
                 </aside>
                 <section class="name_hash">
                     <div id="hash_folder">
-                        <button class="hashbtn" onclick='post_by_all()'>#전체</button>
+                        <button class="hashbtn active" onclick='post_by_all(1)'>#전체</button>
                     </div>
                 </section>
                 <section id="post-box" class="list_sec">
