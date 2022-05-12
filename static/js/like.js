@@ -270,6 +270,7 @@ function get_posts(count, sortOption = "new") {
 
 function get_posts_like(count) {
     let posts_list = new Array();
+    $.cookie('count', count, {path: '/'});
     $.ajax({
         type: "GET",
         url: `/get_posts_like`,
@@ -384,6 +385,7 @@ function get_posts_like(count) {
 }
 function location_change(page){
     if (USER_NAME != "Guest"){
+        $.cookie('count', 10, {path: '/'});
         window.location.href =page;
     }else {
         alert("로그인이 필요한 페이지 입니다.");

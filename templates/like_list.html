@@ -55,19 +55,7 @@
             alert("로그인 후에 사용하실 수 있습니다.");
             window.location.href="/";
         }
-        $(document).ready(function () {
 
-            if (token !== undefined) {
-                $(".login > small").text("로그아웃");
-                $('.login').prop('href', 'javascript:void(0)')
-                $('.login').attr('onclick', 'sign_out()')
-            } else {
-                $(".login > small").text("로그인");
-                $('.login').prop('href', "/login")
-                $('.login').removeAttr('onclick')
-            }
-            infinity_scroll_like(10);
-        })
 
     </script>
 </head>
