@@ -103,10 +103,10 @@ function get_posts(count, sortOption = "new") {
                         console.log(response["session"], comment_list[j]['username'])
                         let temp = `<div class="comment_frame" id="${comment_list[j]["_id"]}">
                                         <figure class="user_img">
-                                                    ${comment_list[j]['comment_user_img']  ?
-                                                        `<img src="data:image;base64, ${ comment_list[j]['comment_user_img'] }"
-                                                             alt="${ comment_list[j]['username'] }"/>`
-                                                    : `<img src="/static/profile_pics/profile_placeholder.png" alt="${ comment_list[j]['username'] }"/>`}
+                                                    ${comment_list[j]['comment_user_img'] ?
+                            `<img src="data:image;base64, ${comment_list[j]['comment_user_img']}"
+                                                             alt="${comment_list[j]['username']}"/>`
+                            : `<img src="/static/profile_pics/profile_placeholder.png" alt="${comment_list[j]['username']}"/>`}
                                                 </figure>
                                         <div class="comment_detail">
                                             <p class="user_name">
@@ -169,10 +169,10 @@ function get_posts(count, sortOption = "new") {
                                 </div>
                                 <div class="feed_detail">
                                     <p class="detail has_more">
-                                        <span class="txt">${post["text"]}</span>
-                                        <button class="more_btn">
-                                            더보기
-                                        </button>
+                                        ${post["cut_text"] ? ` <span class="txt">${ post["cut_text"] }</span>
+                                                <button onclick="more_text(event,'${ post["_id"] }')" class="more_btn">
+                                                    더보기
+                                                </button>` : `<span class="txt">${ post["text"] }</span>`}
                                     </p>
 
                                     <div class="img_group">
@@ -228,10 +228,10 @@ function get_posts(count, sortOption = "new") {
                                 </div>
                                 <div class="feed_detail">
                                     <p class="detail has_more">
-                                        <span class="txt">${post["text"]}</span>
-                                        <button class="more_btn">
-                                            더보기
-                                        </button>
+                                        ${post["cut_text"] ? ` <span class="txt">${ post["cut_text"] }</span>
+                                                <button onclick="more_text(event,'${ post["_id"] }')" class="more_btn">
+                                                    더보기
+                                                </button>` : `<span class="txt">${ post["text"] }</span>`}
                                     </p>
 
                                     <div class="img_group">
@@ -354,12 +354,10 @@ function get_posts_like(count) {
                                     </a>
                                 </div>
                                 <div class="feed_detail">
-                                    <p class="detail has_more">
-                                        <span class="txt">${post["text"]}</span>
-                                        <button class="more_btn">
-                                            더보기
-                                        </button>
-                                    </p>
+                                    ${post["cut_text"] ? ` <span class="txt">${ post["cut_text"] }</span>
+                                                <button onclick="more_text(event,'${ post["_id"] }')" class="more_btn">
+                                                    더보기
+                                                </button>` : `<span class="txt">${ post["text"] }</span>`}
 
                                     <div class="img_group">
                                         ${image_temp}                             
