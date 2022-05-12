@@ -57,11 +57,13 @@ def time_difference(compare_time):
     else:
         return '방금'
 
+
 # 문자열 자르기
 def cut_string(string, max):
     if len(string) > max:
         result = string[0:max]
         return result
+
 
 # 유저 수정된 프로필 사진 가져오기
 def get_user_profile(user_info):
@@ -73,6 +75,7 @@ def get_user_profile(user_info):
         return str(images[0])
     else:
         return False
+
 
 @app.route('/')
 def main():
@@ -89,7 +92,7 @@ def main():
         # 내 정보 불러오기
         my_info = db.users.find_one({'username': user_id})
         profile_img = get_user_profile(my_info)
-        if profile_img is not False :
+        if profile_img is not False:
             my_info['edit_my_img'] = profile_img
     else:
         my_info = False
@@ -108,7 +111,7 @@ def main():
         for comment in post["comment_list"]:
             comment["_id"] = str(comment["_id"])
             comment["time_difference"] = time_difference(comment["date"])
-            comment_user = db.users.find_one({'username':comment['username']})
+            comment_user = db.users.find_one({'username': comment['username']})
             profile_img = get_user_profile(comment_user)
             if profile_img is not False:
                 comment['comment_user_img'] = profile_img
@@ -123,7 +126,7 @@ def main():
         profile_img = get_user_profile(post_user)
         if profile_img is not False:
             post['post_user_img'] = profile_img
-     return render_template('index.html', posts=posts, user_id=user_id, my_info=my_info, comment_count=comment_count)
+    return render_template('index.html', posts=posts, user_id=user_id, my_info=my_info, comment_count=comment_count)
 
 
 @app.route('/edit_user', methods=['POST'])
@@ -148,6 +151,7 @@ def get_more_txt():
     postId = request.args.get("id")
     post = db.post_data.find_one({"_id": ObjectId(postId)})
     return jsonify({'data': post["text"]})
+
 
 @app.route('/write')
 def write():
@@ -177,6 +181,7 @@ def write():
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("main"))
 
+
 @app.route('/get_images', methods=['GET'])
 def get_images():
     images = []
@@ -188,9 +193,11 @@ def get_images():
 
     return jsonify({'images': images})
 
+
 @app.route('/list')
 def lists():
     return render_template("list.html")
+
 
 @app.route('/login')
 def login():
@@ -298,6 +305,7 @@ def like_list():
             return redirect("/")
     else:
         return redirect(url_for("/"))
+
 
 @app.route('/profile')
 def profile():
@@ -428,6 +436,7 @@ def get_posts():
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
 
+
 @app.route("/get_posts_like", methods=['GET'])
 def get_posts_like():
     count = int(request.args.get("count"))
@@ -515,6 +524,7 @@ def update_like():
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
 
+
 @app.route("/search", methods=['GET'])
 def search():
     hash_receive = request.args.get("hash_give")
@@ -542,6 +552,7 @@ def search():
         return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
+
 
 @app.route("/guest_search", methods=['GET'])
 def guest_search():
@@ -622,7 +633,6 @@ def sort():
         else:
             posts = list(db.post_data.find({}).sort("date", -1))
 
-
         for post in posts:
             post["_id"] = str(post["_id"])
             post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
@@ -633,7 +643,7 @@ def sort():
             if len(post['img_ids']) > 0:
                 for img_id in post['img_ids']:
                     image.append(get_img_file(ObjectId(img_id)))
-            post["s3_image_list"] =image
+            post["s3_image_list"] = image
             post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
             post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
             for comment in post["comment_list"]:
@@ -645,6 +655,7 @@ def sort():
         return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
+
 
 @app.route("/guest_sort", methods=['GET'])
 def guest_sort():
