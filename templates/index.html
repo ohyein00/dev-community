@@ -376,7 +376,11 @@
                                             {% endfor %}
                                         </div>
                                         <div class="hash_group is_flex">
-                                            {{ hash_temp }}
+                                            {% for hash in post['hash_tags'] %}
+                                                <div class="hash_item">
+                                                    <a><small >#{{hash}}</small></a>
+                                                </div>
+                                            {% endfor %}
                                         </div>
                                     </div>
                                 </article>
