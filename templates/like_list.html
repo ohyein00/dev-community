@@ -43,6 +43,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Devom - 개발자 커뮤니티 | 좋아요리스트</title>
     <script>
+        {% if session['username'] %}
+            const USER_NAME = '{{ session['username'] }}';
+        {% else %}
+            const USER_NAME = 'Guest';
+        {% endif %}
         let token = $.cookie('mytoken');
         if (token !== undefined) {
 
@@ -70,42 +75,69 @@
     <div id="container">
         <div id="contents">
             <header>
-                <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation" style="padding: 0px;">
-                        <div class="input-group">
-                            <input style="font-size: 12px" type="text" class="form-control" placeholder="검색 키워드를 입력하세요!">
-                            <span class="input-group-btn">
-                                <button style="width: 30px; height: 30px; padding: 0px;" class="btn btn-secondary" type="button"><i style="margin: 0px;" class="fa fa-search" aria-hidden="true"></i></button>
+                <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation"
+                     style="padding: 0px;">
+                    <div class="input-group">
+                        <input style="font-size: 12px" type="text" class="form-control" placeholder="검색 키워드를 입력하세요!">
+                        <span class="input-group-btn">
+                                <button style="width: 30px; height: 30px; padding: 0px;" class="btn btn-secondary"
+                                        type="button"><i style="margin: 0px;" class="fa fa-search"
+                                                         aria-hidden="true"></i></button>
+
+                        </span>
+                    </div>
+                </nav>
+                <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation"
+                     style="padding: 0px;">
+                    <div class="input-group">
+                        <input id="search_hash" style="font-size: 12px" type="text" class="form-control"
+                               placeholder="검색 키워드를 입력하세요!">
+                        <span class="input-group-btn">
+                                <button onclick="execSearch()" style="width: 30px; height: 30px; padding: 0px;"
+                                        class="btn btn-secondary" type="button"><i style="margin: 0px;"
+                                                                                   class="fa fa-search"
+                                                                                   aria-hidden="true"></i></button>
+
                             </span>
-                        </div>
+                    </div>
                     <div class="navbar-brand" style="padding: 0px; margin-bottom: 0px; margin-top: 0px;">
-                        <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+                        <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px">
+
                             <strong class="is-sparta"
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
-                                    style="color:black"  class="fa fa-list" aria-hidden="true"></i></strong>
+                                    style="color:black" class="fa fa-list" aria-hidden="true"></i></strong>
                         </a>
-                        <a class="navbar-item" href="/write" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+                        <button class="navbar-item" href="/write" onclick="location_change('/write')"
+                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px">
                             <strong class="is-sparta"
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
                                     style="color:darkblue" class="fa fa-pencil-square-o"
                                     aria-hidden="true"></i></strong>
 
-                        </a>
-                        <a class="navbar-item" href="/like_list" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+                        </button>
+                        <button  class="navbar-item" href="/like_list" onclick="location_change('/like_list')"
+                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px">
                             <strong class="is-sparta"
-                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i style="color:crimson" class="fa fa-heart" aria-hidden="true"></i></strong>
-
-                        </a>
-                        <a class="navbar-item" href="/profile" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;">
+                                <i style="color:crimson"
+                                   class="fa fa-heart"
+                                   aria-hidden="true"></i></strong>
+                        </button>
+                        <button class="navbar-item" href="/profile" onclick="location_change('/profile')"
+                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px">
                             <strong class="is-sparta"
-                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i style="color:gray"  class="fa fa-user" aria-hidden="true"></i></strong>
+                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i style="color:gray"
+                                                                                                   class="fa fa-user"
+                                                                                                   aria-hidden="true"></i></strong>
 
-                        </a>
+
+                        </button>
 
 
                     </div>
                     <a class="login" href="/" style="margin-right: 20px">
                         <small class="is-sparta"
-                                style="font-family: 'Black Han Sans', sans-serif;font-size: small;">로그인</small>
+                               style="font-family: 'Black Han Sans', sans-serif;font-size: small;">로그인</small>
                     </a>
 
                 </nav>
@@ -115,7 +147,7 @@
                     <div id="post-box" class="container">
                          <!-- 피드 반복 -->
                         {% for post in posts %}
-                            <div class="feed_frame" id="{{ post['_id'] }}">
+                            <div class="feed_frame" id="{{ post['_id'] }}" data-postinfo="{{ post }}">
                                 <article class="feed">
                                     <div class="media user_info">
                                         <figure class="image user_img">
@@ -124,14 +156,16 @@
                                         <div class="text_area">
                                             <p class="user_name">
                                                 <strong>{{ post['profile_name'] }}</strong>
-                                                <small style="font-size: xx-small">@{{ post['username'] }}</small>
+                                                <small style="font-size: xx-small">{{ post['username'] }}</small>
                                             </p>
                                             <p class="feed_info">
-                                                <span class="info_unit contour time">시간</span>
+                                                <span class="info_unit contour time">{{ post["time_difference"] }} 전</span>
                                                 <span class="info_unit contour">좋아요 {{ post['count_heart'] }}</span>
-                                                {% if user_id %}
-                                                    <span class="info_unit contour">수정</span>
-                                                    <span class="info_unit contour">삭제</span>
+                                                {% if user_id == post["username"] %}
+                                                    <span class="info_unit contour updater"><a
+                                                            href="/write?post_id={{ post['_id'] }}">수정</a></span>
+                                                    <span onclick="postDelete('{{ post['_id'] }}')"
+                                                          class="info_unit contour deleter">삭제</span>
                                                 {% else %}
                                                 {% endif %}
                                             </p>
@@ -153,10 +187,15 @@
                                     </div>
                                     <div class="feed_detail">
                                         <p class="detail has_more">
-                                            <span class="txt">{{ post["text"] }}</span>
-                                            <button class="more_btn">
-                                                더보기
-                                            </button>
+                                            {% if post["cut_text"] %}
+                                                <span class="txt">{{ post["cut_text"] }}</span>
+                                                <button onclick="more_text(event,'{{ post["_id"] }}')" class="more_btn">
+                                                    더보기
+                                                </button>
+                                            {% else %}
+                                                <span class="txt">{{ post["text"] }}</span>
+                                            {% endif %}
+
                                         </p>
 
                                         <div class="img_group">
@@ -183,24 +222,44 @@
                                                     <p class="user_name">
                                                         <strong>{{ comment["profile_name"] }}</strong>
                                                         <small style="font-size: xx-small">{{ comment["username"] }}</small>
-                                                        <small class="time contour left">시간</small>
+                                                        <small class="time contour left">{{ comment["time_difference"] }}
+                                                            전</small>
+                                                        <small class="feed_info">
+                                                            {% if user_id == comment["username"] %}
+                                                                <span onclick="commentDelete('{{ comment["_id"] }}')"
+                                                                      class="time contour deleter">| 삭제</span>
+                                                            {% endif %}
+                                                        </small>
                                                     </p>
                                                     <p class="user_comment">{{ comment["comment"] }}</p>
+
                                                 </div>
                                             </div>
                                         {% endfor %}
+                                        {% if post["count_comment"] > 3 %}
+                                            <diV style="width: 100%; display: flex; align-items: center; justify-content: center;">
+                                                <button style="border: 0px;" class="more_btn"
+                                                        onclick="toggle_comment()">
+                                                    <img width="15" height="15"
+                                                         src="/static/profile_pics/more_icon.png">
+                                                </button>
+                                            </div>
+                                        {% endif %}
                                     </div>
-                                    <div class="input_wrap">
-                                        <div class="input_area gray_type is_flex">
-                                            <label class="{{ post['_id'] }}">
-                                                <input type="text" placeholder="댓글을 입력하세요" maxlength="100">
-                                            </label>
-                                            <button type="submit" onclick="comment('{{ post['_id'] }}')">
-                                                입력
-                                            </button>
-                                        </div>
+                                    {% if user_id %}
+                                        <div class="input_wrap">
+                                            <div class="input_area gray_type is_flex">
 
-                                    </div>
+                                                <label class="{{ post['_id'] }}">
+                                                    <input type="text" placeholder="댓글을 입력하세요" maxlength="100"
+                                                           minlength="1">
+                                                </label>
+                                                <button type="submit" onclick="comment('{{ post['_id'] }}')">
+                                                    입력
+                                                </button>
+                                            </div>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         {% endfor %}

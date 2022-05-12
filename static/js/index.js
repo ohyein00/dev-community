@@ -221,3 +221,13 @@ const postDelete = id => {
         }
     })
 }
+const commentDelete = id => {
+    $.ajax({
+        type: 'POST',
+        url: '/comment_delete',
+        data: {comment_id: id},
+        success: function (res) {
+            window.location.reload();
+        }
+    })
+}

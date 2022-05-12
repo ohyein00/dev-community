@@ -140,7 +140,10 @@
 
 .feed_info > span{
     font-size:12px;
-    color: #666
+    color: #666;
+}
+.updater,.deleter{
+    cursor: pointer;
 }
 .feed_comment .comment_frame .user_comment {
     font-size: 14px;
