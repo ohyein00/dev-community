@@ -67,6 +67,9 @@
             if (token !== undefined) {
                 post_hash();
                 post_by_all()
+                $(".login > small").text("로그아웃");
+                $('.login').prop('href', 'javascript:void(0)')
+                $('.login').attr('onclick', 'sign_out()')
             } else {
                 alert("로그인 후에 사용하실 수 있습니다.");
                 window.location.href = "/";
