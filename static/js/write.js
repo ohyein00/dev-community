@@ -1,10 +1,12 @@
 let images = [];
 
 $(function(){
+
     $('#file').change(function(e) {
         $("#file_preview > div:nth-child(1)").html('');
         images = [];
         images = e.target.files;
+        console.log(images[0])
 
         //limit 4
         const tmp = [];
@@ -77,7 +79,7 @@ $(function(){
     });
 })
 
-function post(option = ["insert", ""]) {
+function post(option = "insert", postId = "") {
     const textArea = $('#writeform > textarea');
     let today = new Date().toISOString();
 
@@ -89,8 +91,8 @@ function post(option = ["insert", ""]) {
     const form = new FormData();
     form.append("text", textArea.val());
     form.append("date", today);
-    form.append("option", option[0]);
-    if (option.length > 1) form.append("post_id", option[1]);
+    form.append("option", option);
+    form.append("post_id", postId);
 
     if (images.length) {
         let i = 0;
@@ -106,7 +108,8 @@ function post(option = ["insert", ""]) {
         contentType: false,
         processData: false,
         data: form,
-        success: function (response) {
+        success: function (res) {
+            alert('게시물이 등록되었습니다.')
             window.location.href = '/';
         }
     })

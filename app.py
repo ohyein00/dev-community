@@ -105,18 +105,43 @@ def get_more_txt():
 
 @app.route('/write')
 def write():
-    if len(request.args) > 0:
-        post_id = request.args['post_id']
-        print(post_id)
-
+    btn_name = '게시'
+    text = ''
+    imgs = []
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
 
-        return render_template("write.html", nickname=user_info['nickname'])
+        if len(request.args) > 0:
+            btn_name = '수정 완료'
+            post_id = request.args['post_id']
+            post = db.post_data.find_one({'_id': ObjectId(post_id)})
+            text = post['text']
+
+            if len(post['img_ids']) > 0:
+                for img_id in post['img_ids']:
+                    imgs.append(get_img_file(ObjectId(img_id)))
+
+        return render_template("write.html",
+                               btn_name=btn_name,
+                               nickname=user_info['nickname'],
+                               text=text,
+                               imgs=imgs)
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return redirect(url_for("home", msg='로그인이 필요한 페이지입니다.'))
+        return redirect(url_for("main"))
+
+@app.route('/get_images', methods=['GET'])
+def get_images():
+    images = []
+    post_id = request.args.get('post_id')
+    post = db.post_data.find_one({'_id': ObjectId(post_id)})
+    if len(post['img_ids']) > 0:
+        for img_id in post['img_ids']:
+            images.append(get_img_file(ObjectId(img_id)))
+
+    return jsonify({'images': images})
+
 @app.route('/list')
 def lists():
     return render_template("list.html")
@@ -236,8 +261,7 @@ def posting():
         text_receive = request.form['text']
         date_receive = request.form['date']
         option_receive = request.form['option']
-        if request.form['post_id'] != "":
-            post_id_receive = request.form['post_id']
+        post_id_receive = request.form['post_id']
 
         pattern = '#([0-9a-zA-Z가-힣]*)'
         find_hash = re.compile(pattern)
@@ -250,7 +274,16 @@ def posting():
                 img_ids.append(str(img_id))
 
         if option_receive == 'update':
-            db.post_data.update_one({'_id': post_id_receive}, {'$set': {'text': text_receive, 'img_ids': img_ids}})
+            post = db.post_data.find_one({'_id': ObjectId(post_id_receive)})
+            if (len(post['img_ids']) > 0):
+                for file_id in post['img_ids']:
+                    obj_id = ObjectId(file_id)
+                    db.fs.chunks.delete_one({'files_id': obj_id})
+                    db.fs.files.delete_one({'_id': obj_id})
+            db.post_data.update_one({'_id': ObjectId(post_id_receive)},
+                                    {'$set': {'text': text_receive,
+                                              'img_ids': img_ids,
+                                              'hash_tags': hash_tags}})
         else:
             db.post_data.insert_one({
                 "username": user_info['username'],
