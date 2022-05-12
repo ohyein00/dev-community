@@ -47,6 +47,7 @@
     <script>
         {% if session['username'] %}
             const USER_NAME = '{{ session['username'] }}';
+
         {% else %}
             const USER_NAME = 'Guest';
         {% endif %}
@@ -54,7 +55,7 @@
         let currentImages = [];
 
         $(document).ready(function () {
-
+            console.log(USER_NAME)
             let count = 10
             if ($.cookie('count') !== undefined) {
                 count = $.cookie('count')
