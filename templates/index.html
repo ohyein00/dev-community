@@ -43,6 +43,7 @@
     <script src='{{ url_for("static", filename="js/scroll.js") }}'></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Devom - 개발자 커뮤니티</title>
     <script>
         {% if session['username'] %}
@@ -50,6 +51,9 @@
         {% else %}
             const USER_NAME = 'Guest';
         {% endif %}
+
+        let currentImages = [];
+
         $(document).ready(function () {
 
             let count = 10
@@ -57,7 +61,6 @@
                 count = $.cookie('count')
             }
             infinity_scroll_list(parseInt(count));
-
         })
 
         // 검색
@@ -167,7 +170,7 @@
                                         </button>
                                     </p>
 
-                                    <div class="img_group">
+                                    <div class="img_group" onclick="imageModal(this)">
                                         ${image_temp}
                                     </div>
                                 </div>
@@ -375,7 +378,7 @@
 
                                         </p>
 
-                                        <div class="img_group">
+                                        <div class="img_group" onclick="imageModal(this)">
                                             {% for img in post['s3_image_list'] %}
                                                 <div class="img_frame">
                                                     <img src="data:image;base64,{{ img }}"/>
@@ -494,6 +497,7 @@
         </div>
     </div>
 </div>
+
 <script>
     const modalShow = (modalName) => {
         document.querySelector(modalName).classList.add('is-active')
@@ -530,6 +534,28 @@
         })
     }
 </script>
+
+<div id="img_modal_wrap"
+     onclick="if (event.target.className === 'slide-img') return; $(this).addClass('hidden');"
+     class="hidden w-full h-[100vh] fixed z-40 left-0 top-0 bg-black/50 flex justify-center items-center">
+        <div class="w-full max-w-full max-h-[80%] flex items-center">
+            <div class="swiper">
+                <div id="img_swiper_container" class="swiper-wrapper">
+
+                </div>
+            </div>
+        </div>
+</div>
+<link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css"/>
+<script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+<style>
+    :root {
+        --swiper-navigation-size: 32px;
+        --swiper-theme-color: #fff/0.9;
+    }
+
+</style>
+
 </body>
 
 </html>

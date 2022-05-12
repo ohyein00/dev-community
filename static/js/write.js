@@ -5,8 +5,9 @@ $(function(){
     $('#file').change(function(e) {
         $("#file_preview > div:nth-child(1)").html('');
         images = [];
-        images = e.target.files;
-        console.log(images[0])
+        for (const i of e.target.files) {
+            if(i.type.includes('image')) images.push(i);
+        }
 
         //limit 4
         const tmp = [];

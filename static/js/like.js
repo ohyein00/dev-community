@@ -175,7 +175,7 @@ function get_posts(count, sortOption = "new") {
                                                 </button>` : `<span class="txt">${ post["text"] }</span>`}
                                     </p>
 
-                                    <div class="img_group">
+                                    <div class="img_group" onclick="imageModal(this)">
                                         ${image_temp}                             
                                     </div>
                                     <div class="hash_group is_flex">

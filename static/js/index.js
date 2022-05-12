@@ -60,12 +60,12 @@ const sortFeed = opt => {
             ? _.sortBy(v => _.go(
                 v,
                 getDataObj,
-                _.map(v => v['date']))) :
+                _.map(v => v['date']))):
             opt == "old"
                 ? _.sortByDesc(v => _.go(
                     v,
                     getDataObj,
-                    _.map(v => v['date']))) :
+                    _.map(v => v['date']))):
                 _.sortBy(v => _.go(
                     v,
                     getDataObj,
@@ -185,7 +185,7 @@ const sort = opt => {
                                         </button>
                                     </p>
 
-                                    <div class="img_group">
+                                    <div class="img_group" onclick="imageModal(this)">
                                         ${image_temp}                             
                                     </div>
                                     <div class="hash_group is_flex">
@@ -222,14 +222,36 @@ const sort = opt => {
 }
 
 const postDelete = id => {
-    $.ajax({
-        type: 'POST',
-        url: '/post_delete',
-        data: {post_id: id},
-        success: function (res) {
-            location.href = "/";
-        }
-    })
+
+    if(confirm('삭제하시겠습니까?'))
+        $.ajax({
+            type: 'POST',
+            url: '/post_delete',
+            data: {post_id: id},
+            success: function (res) {
+                location.href = "/";
+            }
+        })
+}
+
+const imageModal = target => {
+    const imgSwiper = new Swiper('.swiper', {
+        grabCursor: true,
+        autoHeight: true,
+        centeredSlides: true,
+    });
+
+    $('#img_swiper_container').html('');
+    $('#img_modal_wrap').removeClass('hidden');
+    for (const img of $(target).find('img')) {
+        const tmp  =  new Image();
+        tmp.src = img.src;
+        const div = document.createElement("div");
+        tmp.className = "slide-img max-w-[80%]";
+        div.className = "swiper-slide flex justify-center";
+        div.appendChild(tmp);
+        $('#img_swiper_container').append(div);
+    }
 }
 
 const commentDelete = id => {
@@ -256,6 +278,7 @@ function sign_out() {
             window.location.reload();
         }
     })
+
 
 
 }
