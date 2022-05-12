@@ -48,28 +48,27 @@ $(function(){
                     `;
         } else if (images.length == 4) {
             elements = `
-                      <div class="grid grid-cols-2 grid-rows-2 gap-1">
-                        <img src="${srcs[0]}" class="h-full">
-                        <img src="${srcs[1]}" class="h-full">
-                        <img src="${srcs[2]}" class="h-full">
-                        <img src="${srcs[3]}" class="h-full">
-                      </div>
-                    `;
+              <div class="grid grid-cols-2 grid-rows-2 gap-1">
+                <img src="${srcs[0]}" class="h-full">
+                <img src="${srcs[1]}" class="h-full">
+                <img src="${srcs[2]}" class="h-full">
+                <img src="${srcs[3]}" class="h-full">
+              </div>
+            `;
         } else if (images.length > 4) {
             elements = `
-                      <div class="grid grid-cols-2 grid-rows-2 gap-1">
-                        <img src="${srcs[0]}" class="h-full">
-                        <img src="${srcs[1]}" class="h-full">
-                        <img src="${srcs[2]}" class="h-full">
-                        <div class="relative" class="h-full">
-                          <img src="${srcs[3]}" class="w-full h-full absolute z-0">
-                          <div class="absolute w-full h-full z-10 bg-black opacity-20"></div>
-                          <span class="absolute text-white text-3xl font-semibold left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">+${images.length - 3}</span>
-                        </div>
-                      </div>
-                    `;
+              <div class="grid grid-cols-2 grid-rows-2 gap-1">
+                <img src="${srcs[0]}" class="h-full">
+                <img src="${srcs[1]}" class="h-full">
+                <img src="${srcs[2]}" class="h-full">
+                <div class="relative" class="h-full">
+                  <img src="${srcs[3]}" class="w-full h-full absolute z-0">
+                  <div class="absolute w-full h-full z-10 bg-black opacity-20"></div>
+                  <span class="absolute text-white text-3xl font-semibold left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">+${images.length - 3}</span>
+                </div>
+              </div>
+            `;
         }
-
         $('#file_preview > div:nth-child(1)').html(elements);
         $('#file_input2').removeClass('hidden');
         $('#close_file_input').removeClass('hidden');

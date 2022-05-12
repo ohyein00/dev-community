@@ -1,11 +1,13 @@
 
 * {
     font-family: "noto sans", sans-serif;
+    letter-spacing: inherit;
 }
 
 body {
+
+    letter-spacing: -0.02em;
     font-size:16px;
-    letter-spacing: -0.01em;
     background:#efefef;
     min-height:100vh;
 }
@@ -15,6 +17,7 @@ body {
 }
 
 #container {
+    position:relative;
     width: 100%;
     height: 100%;
     max-width: 1050px;
@@ -28,7 +31,7 @@ body {
 #contents main{
     max-width:1050px;
     margin: 0 auto;
-    padding-top:88px
+    padding-top:100px
 }
 #contents h1 {
     font-size: 30px;
