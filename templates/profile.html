@@ -91,7 +91,7 @@
         $(document).ready(function () {
             let token = $.cookie('mytoken');
             if (token !== undefined) {
-                //post_hash();
+                post_hash();
                 post_by_all()
                 $(".login > small").text("로그아웃");
                 $('.login').prop('href', 'javascript:void(0)')

@@ -1060,3 +1060,172 @@ TypeError: 'NoneType' object is not subscriptable
 [2022-05-12 17:14:24,471] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:14:24] "[36mGET /static/js/scroll.js HTTP/1.1[0m" 304 -
 [2022-05-12 17:14:24,790] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:14:24] "[36mGET /static/profile_pics/profile_placeholder.png HTTP/1.1[0m" 304 -
 [2022-05-12 17:14:24,791] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:14:24] "[36mGET /static/banner/banner01.png HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:21,426] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:21] "GET / HTTP/1.1" 200 -
+[2022-05-12 17:19:21,447] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:21] "[36mGET /static/css/reset.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:21,448] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:21] "[36mGET /static/css/index.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:21,757] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:21] "[36mGET /static/css/ui.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:21,757] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:21] "[36mGET /static/js/index.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:21,758] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:21] "[36mGET /static/js/like.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:21,759] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:21] "[36mGET /static/js/scroll.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:22,075] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:22] "[36mGET /static/profile_pics/profile_placeholder.png HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:22,076] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:22] "[36mGET /static/banner/banner01.png HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:24,910] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:24] "GET /get_posts?count=10&sortOption=new HTTP/1.1" 200 -
+[2022-05-12 17:19:25,224] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:25] "GET /get_posts?count=10&sortOption=new HTTP/1.1" 200 -
+[2022-05-12 17:19:25,480] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:25] "GET /get_posts?count=10&sortOption=new HTTP/1.1" 200 -
+[2022-05-12 17:19:37,709] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:37] "GET /get_posts?count=10&sortOption=new HTTP/1.1" 200 -
+[2022-05-12 17:19:38,024] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:38] "GET /get_posts?count=10&sortOption=new HTTP/1.1" 200 -
+[2022-05-12 17:19:46,419] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:46] "GET /like_list HTTP/1.1" 200 -
+[2022-05-12 17:19:46,667] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:46] "[36mGET /static/css/reset.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:46,745] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:46] "[36mGET /static/js/index.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:46,745] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:46] "[36mGET /static/css/index.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:46,746] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:46] "[36mGET /static/css/ui.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:46,746] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:46] "[36mGET /static/js/like.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:46,747] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:46] "[36mGET /static/js/scroll.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:50,001] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:50] "GET /like_list HTTP/1.1" 200 -
+[2022-05-12 17:19:50,018] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:50] "[36mGET /static/css/reset.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:50,218] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:50] "[36mGET /static/css/index.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:50,325] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:50] "[36mGET /static/js/index.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:50,325] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:50] "[36mGET /static/css/ui.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:50,327] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:50] "[36mGET /static/js/like.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:50,328] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:50] "[36mGET /static/js/scroll.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:19:52,443] ERROR in app: Exception on /profile [GET]
+Traceback (most recent call last):
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\app.py", line 2077, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\app.py", line 1525, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\app.py", line 1523, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\app.py", line 1509, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\app.py", line 360, in profile
+    return render_template("profile.html")
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\templating.py", line 148, in render_template
+    return _render(
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\templating.py", line 128, in _render
+    rv = template.render(context)
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\jinja2\environment.py", line 1301, in render
+    self.environment.handle_exception()
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\jinja2\environment.py", line 936, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\templates\profile.html", line 515, in top-level template code
+    {% if my_info['edit_my_img'] %}
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\jinja2\environment.py", line 466, in getitem
+    return obj[argument]
+jinja2.exceptions.UndefinedError: 'my_info' is undefined
+[2022-05-12 17:19:52,445] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:52] "[35m[1mGET /profile HTTP/1.1[0m" 500 -
+[2022-05-12 17:19:56,319] ERROR in app: Exception on /profile [GET]
+Traceback (most recent call last):
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\app.py", line 2077, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\app.py", line 1525, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\app.py", line 1523, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\app.py", line 1509, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\app.py", line 360, in profile
+    return render_template("profile.html")
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\templating.py", line 148, in render_template
+    return _render(
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\templating.py", line 128, in _render
+    rv = template.render(context)
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\jinja2\environment.py", line 1301, in render
+    self.environment.handle_exception()
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\jinja2\environment.py", line 936, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\templates\profile.html", line 515, in top-level template code
+    {% if my_info['edit_my_img'] %}
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\jinja2\environment.py", line 466, in getitem
+    return obj[argument]
+jinja2.exceptions.UndefinedError: 'my_info' is undefined
+[2022-05-12 17:19:56,320] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:56] "[35m[1mGET /profile HTTP/1.1[0m" 500 -
+[2022-05-12 17:19:59,675] ERROR in app: Exception on /profile [GET]
+Traceback (most recent call last):
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\app.py", line 2077, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\app.py", line 1525, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\app.py", line 1523, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\app.py", line 1509, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\app.py", line 360, in profile
+    return render_template("profile.html")
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\templating.py", line 148, in render_template
+    return _render(
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\flask\templating.py", line 128, in _render
+    rv = template.render(context)
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\jinja2\environment.py", line 1301, in render
+    self.environment.handle_exception()
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\jinja2\environment.py", line 936, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\templates\profile.html", line 515, in top-level template code
+    {% if my_info['edit_my_img'] %}
+  File "C:\Users\zxs37\OneDrive\Desktop\sparta\devom\venv\lib\site-packages\jinja2\environment.py", line 466, in getitem
+    return obj[argument]
+jinja2.exceptions.UndefinedError: 'my_info' is undefined
+[2022-05-12 17:19:59,677] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:19:59] "[35m[1mGET /profile HTTP/1.1[0m" 500 -
+[2022-05-12 17:21:20,986] INFO in _internal:  * Running on http://127.0.0.1:5000 (Press CTRL+C to quit)
+[2022-05-12 17:21:21,367] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:21] "GET /like_list HTTP/1.1" 200 -
+[2022-05-12 17:21:21,390] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:21] "[36mGET /static/css/reset.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:21,534] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:21] "[36mGET /static/css/index.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:21,698] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:21] "[36mGET /static/css/ui.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:21,699] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:21] "[36mGET /static/js/index.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:21,700] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:21] "[36mGET /static/js/like.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:21,701] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:21] "[36mGET /static/js/scroll.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:23,575] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:23] "GET / HTTP/1.1" 200 -
+[2022-05-12 17:21:23,596] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:23] "[36mGET /static/css/reset.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:23,597] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:23] "[36mGET /static/css/index.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:23,897] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:23] "[36mGET /static/css/ui.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:23,898] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:23] "[36mGET /static/js/index.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:23,900] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:23] "[36mGET /static/js/like.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:23,900] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:23] "[36mGET /static/js/scroll.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:23,903] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:23] "[36mGET /static/profile_pics/profile_placeholder.png HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:23,905] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:23] "[36mGET /static/banner/banner01.png HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:25,452] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:25] "GET / HTTP/1.1" 200 -
+[2022-05-12 17:21:25,470] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:25] "[36mGET /static/css/reset.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:25,471] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:25] "[36mGET /static/css/index.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:25,780] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:25] "[36mGET /static/css/ui.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:25,781] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:25] "[36mGET /static/js/index.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:25,781] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:25] "[36mGET /static/js/like.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:25,782] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:25] "[36mGET /static/js/scroll.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:26,096] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:26] "[36mGET /static/profile_pics/profile_placeholder.png HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:26,097] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:26] "[36mGET /static/banner/banner01.png HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:27,689] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:27] "GET /profile HTTP/1.1" 200 -
+[2022-05-12 17:21:27,944] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:27] "[36mGET /static/css/reset.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:28,027] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:28] "[36mGET /static/css/index.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:28,028] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:28] "[36mGET /static/css/ui.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:28,028] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:28] "[36mGET /static/js/index.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:28,030] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:28] "[36mGET /static/js/like.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:28,031] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:28] "[36mGET /static/js/scroll.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:28,485] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:28] "GET /post/profile/all?count=10&sortOption=new HTTP/1.1" 200 -
+[2022-05-12 17:21:28,617] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:28] "[36mGET /static/profile_pics/profile_placeholder.png HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:32,108] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:32] "GET / HTTP/1.1" 200 -
+[2022-05-12 17:21:32,152] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:32] "[36mGET /static/css/reset.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:32,438] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:32] "[36mGET /static/css/index.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:32,439] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:32] "[36mGET /static/css/ui.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:32,441] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:32] "[36mGET /static/js/index.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:32,443] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:32] "[36mGET /static/js/like.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:32,444] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:32] "[36mGET /static/js/scroll.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:32,456] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:32] "[36mGET /static/profile_pics/profile_placeholder.png HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:32,755] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:32] "[36mGET /static/banner/banner01.png HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:33,690] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:33] "GET /profile HTTP/1.1" 200 -
+[2022-05-12 17:21:33,718] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:33] "[36mGET /static/css/reset.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:33,896] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:33] "[36mGET /static/css/index.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:34,028] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:34] "[36mGET /static/css/ui.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:34,029] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:34] "[36mGET /static/js/index.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:34,030] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:34] "[36mGET /static/js/like.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:34,031] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:34] "[36mGET /static/js/scroll.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:21:34,481] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:34] "GET /post/profile/all?count=10&sortOption=new HTTP/1.1" 200 -
+[2022-05-12 17:21:34,612] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:21:34] "[36mGET /static/profile_pics/profile_placeholder.png HTTP/1.1[0m" 304 -
+[2022-05-12 17:22:18,243] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:22:18] "GET /profile HTTP/1.1" 200 -
+[2022-05-12 17:22:18,502] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:22:18] "[36mGET /static/css/reset.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:22:18,563] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:22:18] "[36mGET /static/js/index.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:22:18,565] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:22:18] "[36mGET /static/css/ui.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:22:18,567] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:22:18] "[36mGET /static/css/index.css HTTP/1.1[0m" 304 -
+[2022-05-12 17:22:18,568] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:22:18] "[36mGET /static/js/like.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:22:18,569] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:22:18] "[36mGET /static/js/scroll.js HTTP/1.1[0m" 304 -
+[2022-05-12 17:22:18,909] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:22:18] "GET /post/hash HTTP/1.1" 200 -
+[2022-05-12 17:22:19,031] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:22:19] "GET /post/profile/all?count=10&sortOption=new HTTP/1.1" 200 -
+[2022-05-12 17:22:19,149] INFO in _internal: 127.0.0.1 - - [12/May/2022 17:22:19] "[36mGET /static/profile_pics/profile_placeholder.png HTTP/1.1[0m" 304 -
