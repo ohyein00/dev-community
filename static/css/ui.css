@@ -98,8 +98,9 @@
     margin: 15px -5px 0;
 }
 
-.hash_item + .hash_item {
+.hash_item {
     margin-right: 10px;
+    margin-bottom:8px;
 }
 
 .feed_detail .img_group .img_frame {
@@ -112,7 +113,6 @@
 
 .feed_detail .img_group .img_frame {
     padding-bottom: 40%;
-    margin-left: -2px;
 }
 
 .feed_detail .img_group .img_frame:nth-child(3):last-child,
@@ -492,4 +492,18 @@
     position: absolute;
     right: -150px;
     top: 150px;
+}
+#hash_folder{
+    max-width:680px;
+    margin:0 auto;
+}
+#hash_folder .hashbtn{
+    padding: 8px 10px;
+    background: #555;
+    color: #fff;
+    font-size: 12px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 10px;
+    margin-bottom:10px;
 }
