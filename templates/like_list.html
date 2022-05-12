@@ -44,22 +44,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Devom - 개발자 커뮤니티 | 좋아요리스트</title>
-    <script>
-        {% if session['username'] %}
-            const USER_NAME = '{{ session['username'] }}';
-        {% else %}
-            const USER_NAME = 'Guest';
-        {% endif %}
-        let token = $.cookie('mytoken');
-        if (token !== undefined) {
 
-        } else {
-            alert("로그인 후에 사용하실 수 있습니다.");
-            window.location.href = "/";
-        }
-
-
-    </script>
 </head>
 
 <body>

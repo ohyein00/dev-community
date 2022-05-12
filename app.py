@@ -81,7 +81,7 @@ def get_user_profile(user_info):
 @app.route('/')
 def main():
     # 메인에서 바로 피드 출력
-
+    token_receive = request.cookies.get('mytoken')
     count_receive = request.cookies.get('count')
     count = 10
     if count_receive is not None:
@@ -268,70 +268,76 @@ def check_dup_nickname():
 @app.route('/like_list')
 def like_list():
     token_receive = request.cookies.get('mytoken')
-    if token_receive is not None:
-        try:
-            payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-            like_list = list(db.likes.find({"username": payload["id"]}).sort("_id", -1).limit(10))
-            user_id = check_user_id()
-            posts = list()
-            for like in like_list:
-                temp = db.post_data.find_one({"_id": ObjectId(like["post_id"])})
-                if temp is not None:
-                    posts.append(temp)
-            # posts = list(db.post_data.find({ "$or": [{"_id":"627a7d829f7832603689b329"},{"_id":"627a8114ada74ce8b7468720"},{"_id":"627b06ca1d2c7f973e5b4d5f"}]}).sort("date", -1).skip(count).limit(3))
-            posts_like = list()
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        like_list = list(db.likes.find({"username": payload["id"]}).sort("_id", -1).limit(10))
+        user_id = check_user_id()
+        posts = list()
+        for like in like_list:
+            temp = db.post_data.find_one({"_id": ObjectId(like["post_id"])})
+            if temp is not None:
+                posts.append(temp)
+        # posts = list(db.post_data.find({ "$or": [{"_id":"627a7d829f7832603689b329"},{"_id":"627a8114ada74ce8b7468720"},{"_id":"627b06ca1d2c7f973e5b4d5f"}]}).sort("date", -1).skip(count).limit(3))
+        posts_like = list()
+        if bool(user_id):
+            # 내 정보 불러오기
+            my_info = db.users.find_one({'username': user_id})
+            profile_img = get_user_profile(my_info)
+            if profile_img is not False:
+                my_info['edit_my_img'] = profile_img
+        else:
+            my_info = False
+        for post in posts:
+            post["_id"] = str(post["_id"])
+            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
+            post["time_difference"] = time_difference(post["date"])
+            post_user = db.users.find_one({'username': post['username']})
+            post["profile_name"] = post_user["nickname"]
+            image = []
+            if len(post['img_ids']) > 0:
+                for img_id in post['img_ids']:
+                    image.append(get_img_file(ObjectId(img_id)))
+            post["cut_text"] = cut_string(post["text"], 200)
+            post["s3_image_list"] = image
+            post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
+            post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}).sort("date", -1))
+            for comment in post["comment_list"]:
+                comment["_id"] = str(comment["_id"])
+                comment["time_difference"] = time_difference(comment["date"])
+                comment_user = db.users.find_one({'username': comment['username']})
+                comment["profile_name"] = comment_user["nickname"]
+                profile_img = get_user_profile(comment_user)
+                if profile_img is not False:
+                    comment['comment_user_img'] = profile_img
+            # 유저체크 분기
             if bool(user_id):
-                # 내 정보 불러오기
-                my_info = db.users.find_one({'username': user_id})
-                profile_img = get_user_profile(my_info)
-                if profile_img is not False:
-                    my_info['edit_my_img'] = profile_img
+                post["heart_by_me"] = bool(
+                    db.likes.find_one({"post_id": post["_id"], "username": user_id}))
             else:
-                my_info = False
-            for post in posts:
-                post["_id"] = str(post["_id"])
-                post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
-                post["time_difference"] = time_difference(post["date"])
-                post_user = db.users.find_one({'username': post['username']})
-                post["profile_name"] = post_user["nickname"]
-                image = []
-                if len(post['img_ids']) > 0:
-                    for img_id in post['img_ids']:
-                        image.append(get_img_file(ObjectId(img_id)))
-                post["cut_text"] = cut_string(post["text"], 200)
-                post["s3_image_list"] = image
-                post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
-                post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}).sort("date", -1))
-                for comment in post["comment_list"]:
-                    comment["_id"] = str(comment["_id"])
-                    comment["time_difference"] = time_difference(comment["date"])
-                    comment_user = db.users.find_one({'username': comment['username']})
-                    comment["profile_name"] = comment_user["nickname"]
-                    profile_img = get_user_profile(comment_user)
-                    if profile_img is not False:
-                        comment['comment_user_img'] = profile_img
-                # 유저체크 분기
-                if bool(user_id):
-                    post["heart_by_me"] = bool(
-                        db.likes.find_one({"post_id": post["_id"], "username": user_id}))
-                else:
-                    post["heart_by_me"] = False
-                # 작성자 프사 가져오기
-                post_user = db.users.find_one({'username': post['username']})
-                profile_img = get_user_profile(post_user)
-                if profile_img is not False:
-                    post['post_user_img'] = profile_img
+                post["heart_by_me"] = False
+            # 작성자 프사 가져오기
+            post_user = db.users.find_one({'username': post['username']})
+            profile_img = get_user_profile(post_user)
+            if profile_img is not False:
+                post['post_user_img'] = profile_img
 
-            return render_template("like_list.html", posts=posts, user_id=user_id, my_info=my_info)
-        except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-            return redirect("/")
-    else:
-        return redirect(url_for("/"))
+        return render_template("like_list.html", posts=posts, user_id=user_id, my_info=my_info)
+    except Exception as ex:
+        return redirect("/")
 
 
 @app.route('/profile')
 def profile():
-    return render_template("profile.html")
+    user_id = check_user_id()
+    if bool(user_id):
+        # 내 정보 불러오기
+        my_info = db.users.find_one({'username': user_id})
+        profile_img = get_user_profile(my_info)
+        if profile_img is not False:
+            my_info['edit_my_img'] = profile_img
+    else:
+        my_info = False
+    return render_template("profile.html", user_id=user_id, my_info=my_info)
 
 
 @app.route('/post_content')
@@ -641,15 +647,18 @@ def post_hash():
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
-        hash_tags = db.users.find_one({"username": user_info['username']})['hash_tags']
+        hash_tags = db.users.find_one({"username": user_info['username']})["hash_tags"]
         return jsonify({"result": "success", "msg": "해쉬태그를 가져왔습니다.", "hash_tags": hash_tags})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
 
+
 @app.route("/post/profile/all", methods=['GET'])
 def post_by_all():
+    sort_option = request.args['sortOption']
     token_receive = request.cookies.get('mytoken')
     try:
+        user_id = check_user_id()
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
         posts = list(
@@ -658,19 +667,40 @@ def post_by_all():
 
         for post in posts:
             post["_id"] = str(post["_id"])
-            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"], "type": "heart"})
-            post["heart_by_me"] = bool(
-                db.likes.find_one({"post_id": post["_id"], "type": "heart", "username": payload["id"]}))
-
+            post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
+            post["time_difference"] = time_difference(post["date"])
+            post_user = db.users.find_one({'username': post['username']})
+            post["profile_name"] = post_user["nickname"]
             image = []
             if len(post['img_ids']) > 0:
                 for img_id in post['img_ids']:
                     image.append(get_img_file(ObjectId(img_id)))
+            post["cut_text"] = cut_string(post["text"], 200)
             post["s3_image_list"] = image
             post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
-            post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+            post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}).sort("date", -1))
             for comment in post["comment_list"]:
                 comment["_id"] = str(comment["_id"])
+                comment["time_difference"] = time_difference(comment["date"])
+                comment_user = db.users.find_one({'username': comment['username']})
+                comment["profile_name"] = comment_user["nickname"]
+                profile_img = get_user_profile(comment_user)
+                if profile_img is not False:
+                    comment['comment_user_img'] = profile_img
+            # 유저체크 분기
+            if bool(user_id):
+                post["heart_by_me"] = bool(
+                    db.likes.find_one({"post_id": post["_id"], "username": user_id}))
+            else:
+                post["heart_by_me"] = False
+            # 작성자 프사 가져오기
+            post_user = db.users.find_one({'username': post['username']})
+            profile_img = get_user_profile(post_user)
+            if profile_img is not False:
+                post['post_user_img'] = profile_img
+
+        if sort_option == 'like':
+            posts = sorted(posts, key=lambda post: -post['count_heart'])
         # 포스팅 목록 받아오기
         return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
@@ -780,7 +810,6 @@ def guest_sort():
 @app.route("/post_delete", methods=['POST'])
 def post_delete():
     post_id = request.form['post_id']
-    print(post_id)
     db.post_data.delete_one({'_id': ObjectId(post_id)})
     return jsonify({"result": "success"})
 
@@ -788,14 +817,15 @@ def post_delete():
 @app.route("/comment_delete", methods=['POST'])
 def comment_delete():
     comment_id = request.form['comment_id']
-    print(comment_id)
     db.comment.delete_one({'_id': ObjectId(comment_id)})
     return jsonify({"result": "success"})
+
 
 @app.route('/logout', methods=['GET'])
 def logout():
     session.pop('username', None)
     return jsonify({"result": "로그아웃!!"})
+
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
