@@ -38,7 +38,7 @@ def check_user_id():
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        return payload["id"]
+        return payload['id']
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return False
 
@@ -65,6 +65,18 @@ def cut_string(string, max):
         return result
 
 
+# 유저 수정된 프로필 사진 가져오기
+def get_user_profile(user_info):
+    if type(user_info['img']) is list:
+        images = []
+        if len(user_info['img']) > 0:
+            for img_id in user_info['img']:
+                images.append(get_img_file(ObjectId(img_id)))
+        return str(images[0])
+    else:
+        return False
+
+
 @app.route('/')
 def main():
     # 메인에서 바로 피드 출력
@@ -76,6 +88,14 @@ def main():
     posts = list(db.post_data.find({}).sort("date", -1).limit(count))
     user_id = check_user_id()
     comment_count = 0
+    if bool(user_id):
+        # 내 정보 불러오기
+        my_info = db.users.find_one({'username': user_id})
+        profile_img = get_user_profile(my_info)
+        if profile_img is not False:
+            my_info['edit_my_img'] = profile_img
+    else:
+        my_info = False
     for post in posts:
         post["_id"] = str(post["_id"])
         post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
@@ -84,7 +104,6 @@ def main():
         if len(post['img_ids']) > 0:
             for img_id in post['img_ids']:
                 image.append(get_img_file(ObjectId(img_id)))
-
         post["cut_text"] = cut_string(post["text"], 200)
         post["s3_image_list"] = image
         post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
@@ -92,14 +111,39 @@ def main():
         for comment in post["comment_list"]:
             comment["_id"] = str(comment["_id"])
             comment["time_difference"] = time_difference(comment["date"])
-        # 좋아요 유저체크 분기
+            comment_user = db.users.find_one({'username': comment['username']})
+            profile_img = get_user_profile(comment_user)
+            if profile_img is not False:
+                comment['comment_user_img'] = profile_img
+        # 유저체크 분기
         if bool(user_id):
             post["heart_by_me"] = bool(
                 db.likes.find_one({"post_id": post["_id"], "username": user_id}))
         else:
             post["heart_by_me"] = False
+        # 작성자 프사 가져오기
+        post_user = db.users.find_one({'username': post['username']})
+        profile_img = get_user_profile(post_user)
+        if profile_img is not False:
+            post['post_user_img'] = profile_img
+    return render_template('index.html', posts=posts, user_id=user_id, my_info=my_info, comment_count=comment_count)
 
-    return render_template('index.html', posts=posts, user_id=user_id, comment_count=comment_count)
+
+@app.route('/edit_user', methods=['POST'])
+def user_edit():
+    edit_nick = request.form['nickname']
+    id = check_user_id()
+    user_info = db.users.find_one({'username': id})
+    if request.files is not None:
+
+        edit_images = []
+        for file in request.files:
+            edit_img = str(fs.put(request.files[file]))
+            edit_images.append(edit_img)
+            db.users.update_one({'username': id}, {'$set': {'img': edit_images}})
+    if edit_nick != user_info['nickname']:
+        db.users.update_one({'username': id}, {'$set': {'nickname': edit_nick}})
+    return jsonify({'msg': '회원 정보가 수정 되었습니다.'})
 
 
 @app.route('/get_more_txt', methods=['GET'])
@@ -136,6 +180,7 @@ def write():
                                imgs=imgs)
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("main"))
+
 
 @app.route('/get_images', methods=['GET'])
 def get_images():
@@ -177,6 +222,7 @@ def sign_in():
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
         session['username'] = username_receive
         return jsonify({'result': 'success', 'token': token})
+    # 찾지 못하면
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
 
@@ -259,6 +305,7 @@ def like_list():
             return redirect("/")
     else:
         return redirect(url_for("/"))
+
 
 @app.route('/profile')
 def profile():
@@ -385,8 +432,7 @@ def get_posts():
         if sort_option == 'like':
             posts = sorted(posts, key=lambda post: -post['count_heart'])
         # 포스팅 목록 받아오기
-
-        return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts, "session": session["username"]})
+        return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
 
@@ -503,7 +549,7 @@ def search():
             for comment in post["comment_list"]:
                 comment["_id"] = str(comment["_id"])
         # 포스팅 목록 받아오기
-        return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts, "session": session["username"]})
+        return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
 
