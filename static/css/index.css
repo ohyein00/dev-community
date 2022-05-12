@@ -216,3 +216,6 @@ span.info_unit a {
 .img_frame:hover {
     cursor: pointer;
 }
+.m_hidden {
+    display: none !important;
+}

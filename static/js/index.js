@@ -242,13 +242,15 @@ const imageModal = target => {
     });
 
     $('#img_swiper_container').html('');
-    $('#img_modal_wrap').removeClass('hidden');
+    $('#img_modal_wrap').removeClass('m_hidden');
     for (const img of $(target).find('img')) {
         const tmp  =  new Image();
         tmp.src = img.src;
         const div = document.createElement("div");
-        tmp.className = "slide-img max-w-[80%]";
-        div.className = "swiper-slide flex justify-center";
+        tmp.className = "slide-img";
+        tmp.style = "max-width: 80%";
+        div.className = "swiper-slide";
+        div.style = "display: flex; justify-content:center;";
         div.appendChild(tmp);
         $('#img_swiper_container').append(div);
     }
