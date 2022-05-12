@@ -384,7 +384,8 @@ function get_posts_like(count) {
     return posts_list
 }
 function location_change(page){
-    if (USER_NAME != "Guest"){
+    let token = $.cookie('mytoken');
+    if (token != undefined){
         $.cookie('count', 10, {path: '/'});
         window.location.href =page;
     }else {
