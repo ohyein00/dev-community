@@ -100,18 +100,21 @@ function get_posts(count, sortOption = "new") {
                     for (let j = 0; j < comment_list.length; j++) {
                         let time_post = new Date(comment_list[j]["date"])
                         let time_before = time2str(time_post)
-                          console.log(response["session"],comment_list[j]['username'])
+                        console.log(response["session"], comment_list[j]['username'])
                         let temp = `<div class="comment_frame" id="${comment_list[j]["_id"]}">
                                         <figure class="user_img">
-                                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-                                        </figure>
+                                                    ${comment_list[j]['comment_user_img'] ?
+                            `<img src="data:image;base64, ${comment_list[j]['comment_user_img']}"
+                                                             alt="${comment_list[j]['username']}"/>`
+                            : `<img src="/static/profile_pics/profile_placeholder.png" alt="${comment_list[j]['username']}"/>`}
+                                                </figure>
                                         <div class="comment_detail">
                                             <p class="user_name">
                                                 <strong>${comment_list[j]['profile_name']}</strong> 
                                                 <small style="font-size: xx-small">@${comment_list[j]['username']}</small>
                                                 <small class="time contour left">${time_before}</small>
                                                  ${response["session"] === comment_list[j]['username'] ?
-                                                                `<small class="feed_info">
+                            `<small class="feed_info">
                                                                 <span onclick="commentDelete('${comment_list[j]["_id"]}')"
                                                                           class="time contour deleter">| 삭제</span>
                                                                 </small>` : ``}
@@ -135,8 +138,12 @@ function get_posts(count, sortOption = "new") {
                             <article class="feed">
                                 <div class="media user_info">
                                     <figure class="image user_img">
-                                        <img src="/static/${post['profile_placeholder']}" alt="Image">
-                                    </figure>
+                                            <div class="user_img">
+                                                ${post['post_user_img'] ? `<img src="data:image;base64, ${post['post_user_img']}"
+                                                         alt="${post['profile_name']}"/>` :
+                        `<img src="/static/profile_pics/profile_placeholder.png"   alt="${post['profile_name']}"/>`}
+                                             
+                                        </figure>
                                     <div class="text_area">
                                         <p class="user_name">
                                             <strong>${post['profile_name']}</strong> 
@@ -146,9 +153,9 @@ function get_posts(count, sortOption = "new") {
                                             <span class="time">${time_before}</span>
                                             <span class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
                                             ${post['username'] == USER_NAME
-                                                ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
+                        ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
                                                    <span onclick="postDelete('${postId}')" class="info_unit contour post_delete">삭제</span>`
-                                                : ``}
+                        : ``}
                                         </p>
 
                                     </div>
@@ -162,10 +169,10 @@ function get_posts(count, sortOption = "new") {
                                 </div>
                                 <div class="feed_detail">
                                     <p class="detail has_more">
-                                        <span class="txt">${post["text"]}</span>
-                                        <button class="more_btn">
-                                            더보기
-                                        </button>
+                                        ${post["cut_text"] ? ` <span class="txt">${ post["cut_text"] }</span>
+                                                <button onclick="more_text(event,'${ post["_id"] }')" class="more_btn">
+                                                    더보기
+                                                </button>` : `<span class="txt">${ post["text"] }</span>`}
                                     </p>
 
                                     <div class="img_group" onclick="imageModal(this)">
@@ -221,10 +228,10 @@ function get_posts(count, sortOption = "new") {
                                 </div>
                                 <div class="feed_detail">
                                     <p class="detail has_more">
-                                        <span class="txt">${post["text"]}</span>
-                                        <button class="more_btn">
-                                            더보기
-                                        </button>
+                                        ${post["cut_text"] ? ` <span class="txt">${ post["cut_text"] }</span>
+                                                <button onclick="more_text(event,'${ post["_id"] }')" class="more_btn">
+                                                    더보기
+                                                </button>` : `<span class="txt">${ post["text"] }</span>`}
                                     </p>
 
                                     <div class="img_group">
@@ -297,7 +304,7 @@ function get_posts_like(count) {
                     for (let j = 0; j < comment_list.length; j++) {
                         let time_post = new Date(comment_list[j]["date"])
                         let time_before = time2str(time_post)
-                        console.log(response["session"],comment_list[j]["_id"])
+                        console.log(response["session"], comment_list[j]["_id"])
                         let temp = `<div class="comment_frame" id="${comment_list[j]["_id"]}">
                                         <figure class="user_img">
                                             <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
@@ -308,7 +315,7 @@ function get_posts_like(count) {
                                                 <small style="font-size: xx-small">@${comment_list[j]['username']}</small>
                                                 <small class="time contour left">${time_before}</small>
                                                 ${response["session"] === comment_list[j]['username'] ?
-                                                                `<small class="feed_info">
+                            `<small class="feed_info">
                                                                 <span onclick="commentDelete('${comment_list[j]["_id"]}')"
                                                                           class="time contour deleter">| 삭제</span>
                                                                 </small>` : ``}
@@ -347,12 +354,10 @@ function get_posts_like(count) {
                                     </a>
                                 </div>
                                 <div class="feed_detail">
-                                    <p class="detail has_more">
-                                        <span class="txt">${post["text"]}</span>
-                                        <button class="more_btn">
-                                            더보기
-                                        </button>
-                                    </p>
+                                    ${post["cut_text"] ? ` <span class="txt">${ post["cut_text"] }</span>
+                                                <button onclick="more_text(event,'${ post["_id"] }')" class="more_btn">
+                                                    더보기
+                                                </button>` : `<span class="txt">${ post["text"] }</span>`}
 
                                     <div class="img_group">
                                         ${image_temp}                             
@@ -383,12 +388,13 @@ function get_posts_like(count) {
     })
     return posts_list
 }
-function location_change(page){
+
+function location_change(page) {
     let token = $.cookie('mytoken');
-    if (token != undefined){
+    if (token != undefined) {
         $.cookie('count', 10, {path: '/'});
-        window.location.href =page;
-    }else {
+        window.location.href = page;
+    } else {
         alert("로그인이 필요한 페이지 입니다.");
     }
 

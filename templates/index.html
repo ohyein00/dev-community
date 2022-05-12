@@ -63,7 +63,6 @@
             infinity_scroll_list(parseInt(count));
         })
 
-
         // 검색
         function execSearch() {
             let hash = $("#search_hash").val()
@@ -199,8 +198,8 @@
                 }
             })
         }
-    </script>
 
+    </script>
 </head>
 
 <body>
@@ -234,22 +233,22 @@
                             </span>
                     </div>
                     <div class="navbar-brand" style="padding: 0px; margin-bottom: 0px; margin-top: 0px;">
-                        <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px">
+                        <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
 
                             <strong class="is-sparta"
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
                                     style="color:black" class="fa fa-list" aria-hidden="true"></i></strong>
                         </a>
                         <button class="navbar-item" href="/write" onclick="location_change('/write')"
-                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px">
+                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px;">
                             <strong class="is-sparta"
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
                                     style="color:darkblue" class="fa fa-pencil-square-o"
                                     aria-hidden="true"></i></strong>
 
                         </button>
-                        <button  class="navbar-item" href="/like_list" onclick="location_change('/like_list')"
-                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px">
+                        <button class="navbar-item" href="/like_list" onclick="location_change('/like_list')"
+                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px;">
                             <strong class="is-sparta"
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;">
                                 <i style="color:crimson"
@@ -257,13 +256,12 @@
                                    aria-hidden="true"></i></strong>
                         </button>
                         <button class="navbar-item" href="/profile" onclick="location_change('/profile')"
-                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px">
+                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px;">
                             <strong class="is-sparta"
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i style="color:gray"
                                                                                                    class="fa fa-user"
                                                                                                    aria-hidden="true"></i></strong>
                         </button>
-
 
                     </div>
                     <a class="login" href="/" style="margin-right: 20px">
@@ -274,7 +272,43 @@
                 </nav>
             </header>
             <main>
-
+                <aside class="user_side">
+                    <section class="main_user_profile_sec">
+                        {% if my_info == False %}
+                            <div class="user_info">
+                                <div class="user_img">
+                                    <img src="{{ url_for('static',filename='profile_pics/profile_placeholder.png') }}">
+                                </div>
+                                <p class="no_data">회원 정보가 없습니다</p>
+                            </div>
+                            <div class="btn_area">
+                                <a href="/login" class="btn white">로그인</a>
+                            </div>
+                        {% else %}
+                            <div class="user_info">
+                                <button onclick="modalShow('#usereditModal')" class="edit_btn">
+                                    <i class="fa fa-wrench"></i>
+                                </button>
+                                <div class="user_img">
+                                    {% if my_info['edit_my_img'] %}
+                                        <img src="data:image;base64, {{ my_info['edit_my_img'] }}"/>
+                                    {% else %}
+                                        <img src="{{ url_for("static", filename="profile_pics/profile_placeholder.png") }}"
+                                             alt="{{ my_info['nickname'] }}"/>
+                                    {% endif %}
+                                </div>
+                                <p class="user_name">
+                                    <span class="contour name">{{ my_info['name'] }}</span>
+                                    <span class="contour nick"> {{ my_info['nickname'] }}</span>
+                                </p>
+                                <p class="user_id id">{{ my_info['username'] }}</p>
+                            </div>
+                            <div class="btn_area">
+                                <a href="/write" class="btn red">글 쓰러가기</a>
+                            </div>
+                        {% endif %}
+                    </section>
+                </aside>
                 <section class="list_sec">
                     <div id="sort_box" class="container">
                         <span id="new" onclick="sort('new')" class="sort_item sort_hidden">게시일&uarr;</span>
@@ -288,7 +322,15 @@
                                 <article class="feed">
                                     <div class="media user_info">
                                         <figure class="image user_img">
-                                            <img src="/static/{{ post['profile_placeholder'] }}" alt="Image">
+                                            <div class="user_img">
+                                                {% if post['post_user_img'] %}
+                                                    <img src="data:image;base64, {{ post['post_user_img'] }}"
+                                                         alt="{{ post['profile_name'] }}"/>
+                                                {% else %}
+                                                    <img src="{{ url_for("static", filename="profile_pics/profile_placeholder.png") }}"
+                                                         alt="{{ post['profile_name'] }}"/>
+                                                {% endif %}
+                                            </div>
                                         </figure>
                                         <div class="text_area">
                                             <p class="user_name">
@@ -324,6 +366,7 @@
                                     </div>
                                     <div class="feed_detail">
                                         <p class="detail has_more">
+
                                             {% if post["cut_text"] %}
                                                 <span class="txt">{{ post["cut_text"] }}</span>
                                                 <button onclick="more_text(event,'{{ post["_id"] }}')" class="more_btn">
@@ -352,8 +395,13 @@
                                         {% for comment in post["comment_list"] %}
                                             <div class="comment_frame" id="{{ comment["_id"] }}">
                                                 <figure class="user_img">
-                                                    <img src="https://bulma.io/images/placeholders/128x128.png"
-                                                         alt="Image">
+                                                    {% if comment['comment_user_img'] %}
+                                                        <img src="data:image;base64, {{ comment['comment_user_img'] }}"
+                                                             alt="{{ comment['username'] }}"/>
+                                                    {% else %}
+                                                        <img src="{{ url_for("static", filename="profile_pics/profile_placeholder.png") }}"
+                                                             alt="{{ comment['username'] }}"/>
+                                                    {% endif %}
                                                 </figure>
                                                 <div class="comment_detail">
                                                     <p class="user_name">
@@ -369,7 +417,6 @@
                                                         </small>
                                                     </p>
                                                     <p class="user_comment">{{ comment["comment"] }}</p>
-
                                                 </div>
                                             </div>
                                         {% endfor %}
@@ -386,7 +433,6 @@
                                     {% if user_id %}
                                         <div class="input_wrap">
                                             <div class="input_area gray_type is_flex">
-
                                                 <label class="{{ post['_id'] }}">
                                                     <input type="text" placeholder="댓글을 입력하세요" maxlength="100"
                                                            minlength="1">
@@ -404,9 +450,91 @@
                     </div>
                 </section>
             </main>
+            <div id="usereditModal" class="modal user_edit_modal">
+                <div class="modal-background"></div>
+                <div class="modal-content">
+                    <div class="modal_inner">
+                        <div class="main_user_profile_sec">
+                            <div class="user_info">
+
+                                <label id="file_input" for="imgSelector" class="edit_btn">
+                                    <input type="file" multiple="" id="imgSelector" name="imgSelector"
+                                           accept="image/jpeg, image/jpg, image/png"
+                                           cass="hidden">
+                                    <i class="fa fa-camera"></i>
+                                </label>
+                                <div class="user_img">
+                                    {% if my_info['edit_my_img'] %}
+                                        <img id="thumbProfileImg" src="data:image;base64, {{ my_info['edit_my_img'] }}"/>
+                                    {% else %}
+                                        <img id="thumbProfileImg" src="{{ url_for("static", filename="profile_pics/profile_placeholder.png") }}"
+                                             alt="{{ my_info['nickname'] }}"/>
+                                    {% endif %}
+                                </div>
+                                <p class="user_name">
+                                    <span class="contour name">{{ my_info['name'] }}</span>
+                                    <span class="contour nick"> {{ my_info['nickname'] }}</span>
+                                </p>
+                                <p class="user_id id">{{ my_info['username'] }}</p>
+                            </div>
+                            <div class="input_area">
+                                <label>
+                                    <span>닉네임</span>
+                                    <input type="text" id="nickname" placeholder="수정하실 닉네임을 작성해주세요"
+                                           value="{{ my_info['nickname'] }}">
+                                </label>
+                            </div>
+                        </div>
+                        <div class="btn_area">
+                            <button onclick="edit_complete()" class="btn gray">수정하기</button>
+                            <button onclick="modalHide('#usereditModal')" class="btn white">취소</button>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="modalHide('#usereditModal')" class="modal-close is-large"
+                        aria-label="close"></button>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    const modalShow = (modalName) => {
+        document.querySelector(modalName).classList.add('is-active')
+    }
+    const modalHide = (modalName) => {
+        document.querySelector(modalName).classList.remove('is-active')
+    }
+    document.getElementById('imgSelector').addEventListener('click', function (e) {
+        e.target.previousElementSibling.src = '';
+    })
+    document.getElementById('imgSelector').addEventListener('change', function (e) {
+        const thumb = document.getElementById('thumbProfileImg')
+        let editImgUrl = URL.createObjectURL(e.target.files[0])
+        thumb.src = editImgUrl
+    })
+    const edit_complete = () => {
+        const nickname = document.querySelector('#nickname').value
+        const imgSelectorFiles = document.getElementById('imgSelector').files[0]
+        const form = new FormData()
+        form.append("nickname", nickname);
+        if (!!imgSelectorFiles) {
+            form.append("img", imgSelectorFiles);
+        }
+        $.ajax({
+            type: "POST",
+            url: "/edit_user",
+            contentType: false,
+            processData: false,
+            data: form,
+            success: function (response) {
+                alert(response.msg)
+                window.location.reload()
+            }
+        })
+    }
+</script>
+
 <div id="img_modal_wrap"
      onclick="if (event.target.className === 'slide-img') return; $(this).addClass('hidden');"
      class="hidden w-full h-[100vh] fixed z-40 left-0 top-0 bg-black/50 flex justify-center items-center">
@@ -427,6 +555,7 @@
     }
 
 </style>
+
 </body>
 
 </html>
