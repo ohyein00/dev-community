@@ -119,7 +119,7 @@
                                             </p>
                                             <p class="user_comment">${comment_list[j]['comment']}</p>
                                            ${response["session"] === comment_list[j]["_id"] ?
-                                                                `<small class="feed_info">
+                                    `<small class="feed_info">
                                                                 <span onclick="commentDelete('${comment_list[j]["_id"]}')"
                                                                           class="time contour deleter">| 삭제</span>
                                                                 </small>` : ``}
@@ -342,8 +342,10 @@
                                                 <span class="info_unit contour">좋아요 {{ post['count_heart'] }}</span>
                                                 {% if user_id == post["username"] %}
 
-                                                    <span class="info_unit contour"><a href="/write?post_id={{ post['_id'] }}">수정</a></span>
-                                                    <span onclick="postDelete('{{ post['_id'] }}')" class="info_unit contour post_delete">삭제</span>
+                                                    <span class="info_unit contour"><a
+                                                            href="/write?post_id={{ post['_id'] }}">수정</a></span>
+                                                    <span onclick="postDelete('{{ post['_id'] }}')"
+                                                          class="info_unit contour post_delete">삭제</span>
 
                                                 {% else %}
                                                 {% endif %}
@@ -449,6 +451,12 @@
                         <!-- 피드 반복 끝 -->
                     </div>
                 </section>
+
+                <aside calss="banner_side">
+                    <div class="banner_area">
+                        <img src='{{ url_for("static", filename="banner/banner01.png") }}'>
+                    </div>
+                </aside>
             </main>
             <div id="usereditModal" class="modal user_edit_modal">
                 <div class="modal-background"></div>
@@ -465,9 +473,11 @@
                                 </label>
                                 <div class="user_img">
                                     {% if my_info['edit_my_img'] %}
-                                        <img id="thumbProfileImg" src="data:image;base64, {{ my_info['edit_my_img'] }}"/>
+                                        <img id="thumbProfileImg"
+                                             src="data:image;base64, {{ my_info['edit_my_img'] }}"/>
                                     {% else %}
-                                        <img id="thumbProfileImg" src="{{ url_for("static", filename="profile_pics/profile_placeholder.png") }}"
+                                        <img id="thumbProfileImg"
+                                             src="{{ url_for("static", filename="profile_pics/profile_placeholder.png") }}"
                                              alt="{{ my_info['nickname'] }}"/>
                                     {% endif %}
                                 </div>
