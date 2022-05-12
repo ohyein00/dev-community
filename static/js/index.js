@@ -47,19 +47,19 @@ const sortFeed = opt => {
     const sortDataObj = _.curry((opt, iter) => _.go(
         iter,
         opt == "new"
-        ? _.sortBy(v => _.go(
-            v,
-            getDataObj,
-            _.map(v => v['date']))):
-        opt == "old"
-        ? _.sortByDesc(v => _.go(
-            v,
-            getDataObj,
-            _.map(v => v['date']))):
-         _.sortBy(v => _.go(
-            v,
-            getDataObj,
-            _.map(v => v['count_heart'])))
+            ? _.sortBy(v => _.go(
+                v,
+                getDataObj,
+                _.map(v => v['date']))):
+            opt == "old"
+                ? _.sortByDesc(v => _.go(
+                    v,
+                    getDataObj,
+                    _.map(v => v['date']))):
+                _.sortBy(v => _.go(
+                    v,
+                    getDataObj,
+                    _.map(v => v['count_heart'])))
     ));
 
     const elements = _.go(
@@ -153,9 +153,9 @@ const sort = opt => {
                                             <span class="time">${time_before}</span>
                                             <span class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
                                             ${post['username'] == USER_NAME
-                                                ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
+                        ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
                                                    <span onclick="postDelete('${postId}')" class="info_unit contour post_delete">삭제</span>`
-                                                : ``}
+                        : ``}
                                         </p>
 
                                     </div>
@@ -212,12 +212,33 @@ const sort = opt => {
 }
 
 const postDelete = id => {
-    $.ajax({
-        type: 'POST',
-        url: '/post_delete',
-        data: {post_id: id},
-        success: function (res) {
-            location.href = "/";
-        }
-    })
+    if(confirm('삭제하시겠습니까?'))
+        $.ajax({
+            type: 'POST',
+            url: '/post_delete',
+            data: {post_id: id},
+            success: function (res) {
+                location.href = "/";
+            }
+        })
+}
+
+const imageModal = target => {
+    const imgSwiper = new Swiper('.swiper', {
+        grabCursor: true,
+        autoHeight: true,
+        centeredSlides: true,
+    });
+
+    $('#img_swiper_container').html('');
+    $('#img_modal_wrap').removeClass('hidden');
+    for (const img of $(target).find('img')) {
+        const tmp  =  new Image();
+        tmp.src = img.src;
+        const div = document.createElement("div");
+        tmp.className = "slide-img";
+        div.className = "swiper-slide";
+        div.appendChild(tmp);
+        $('#img_swiper_container').append(div);
+    }
 }

@@ -43,11 +43,15 @@
     <script src='{{ url_for("static", filename="js/scroll.js") }}'></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Devom - 개발자 커뮤니티</title>
     <script>
         {% if session['username'] %}
-        const USER_NAME = '{{ session['username'] }}';
+            const USER_NAME = '{{ session['username'] }}';
         {% endif %}
+
+        let currentImages = [];
+
         $(document).ready(function () {
             let token = $.cookie('mytoken');
             if (token !== undefined) {
@@ -65,7 +69,6 @@
                 count = $.cookie('count')
             }
             infinity_scroll_list(parseInt(count));
-
         })
 
 
@@ -147,9 +150,9 @@
                                             <span class="time">${time_before}</span>
                                             <span class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
                                             ${post['username'] == USER_NAME
-                                                ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
+                                ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
                                                    <span onclick="postDelete('${postId}')" class="info_unit contour">삭제</span>`
-                                                : ``}
+                                : ``}
 
                                             <span id="${post['_id']}_like" class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
 
@@ -233,20 +236,20 @@
                                                                                    aria-hidden="true"></i></button>
 
                             </span>
-                            </div>
-                            <div class="navbar-brand" style="padding: 0px; margin-bottom: 0px; margin-top: 0px;">
-                                <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+                    </div>
+                    <div class="navbar-brand" style="padding: 0px; margin-bottom: 0px; margin-top: 0px;">
+                        <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
 
-                                    <strong class="is-sparta"
-                                            style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
-                                            style="color:black" class="fa fa-list" aria-hidden="true"></i></strong>
-                                </a>
-                                <a class="navbar-item" href="/write"
-                                   style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
-                                    <strong class="is-sparta"
-                                            style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
-                                            style="color:darkblue" class="fa fa-pencil-square-o"
-                                            aria-hidden="true"></i></strong>
+                            <strong class="is-sparta"
+                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
+                                    style="color:black" class="fa fa-list" aria-hidden="true"></i></strong>
+                        </a>
+                        <a class="navbar-item" href="/write"
+                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+                            <strong class="is-sparta"
+                                    style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
+                                    style="color:darkblue" class="fa fa-pencil-square-o"
+                                    aria-hidden="true"></i></strong>
 
                         </a>
                         <a class="navbar-item" href="/like_list"
@@ -263,18 +266,18 @@
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i style="color:gray"
                                                                                                    class="fa fa-user"
                                                                                                    aria-hidden="true"></i></strong>
-                          
-
-                                </a>
 
 
-                            </div>
-                            <a class="login" href="/" style="margin-right: 20px">
-                                <small class="is-sparta"
-                                       style="font-family: 'Black Han Sans', sans-serif;font-size: small;">로그인</small>
-                            </a>
+                        </a>
 
-                        </nav>
+
+                    </div>
+                    <a class="login" href="/" style="margin-right: 20px">
+                        <small class="is-sparta"
+                               style="font-family: 'Black Han Sans', sans-serif;font-size: small;">로그인</small>
+                    </a>
+
+                </nav>
             </header>
             <main>
 
@@ -287,7 +290,7 @@
                     <div id="post-box" class="container">
                         <!-- 피드 반복 -->
                         {% for post in posts %}
-                            <div class="feed_frame" id="{{ post['_id'] }}" data-postinfo="{{ post }}">
+                            <div class="feed_frame" id="{{ post['_id'] }}">
                                 <article class="feed">
                                     <div class="media user_info">
                                         <figure class="image user_img">
@@ -336,7 +339,7 @@
 
                                         </p>
 
-                                        <div class="img_group">
+                                        <div class="img_group" onclick="imageModal(this)">
                                             {% for img in post['s3_image_list'] %}
                                                 <div class="img_frame">
                                                     <img src="data:image;base64,{{ img }}"/>
@@ -398,6 +401,26 @@
         </div>
     </div>
 </div>
+<div id="img_modal_wrap"
+     onclick="if (event.target.className === 'slide-img') return; $(this).addClass('hidden');"
+     class="hidden w-full h-[100vh] fixed z-40 left-0 top-0 bg-black/50 flex justify-center items-center">
+        <div class="w-full flex items-center">
+            <div class="swiper">
+                <div id="img_swiper_container" class="swiper-wrapper">
+
+                </div>
+            </div>
+        </div>
+</div>
+<link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css"/>
+<script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+<style>
+    :root {
+        --swiper-navigation-size: 32px;
+        --swiper-theme-color: #fff/0.9;
+    }
+
+</style>
 </body>
 
 </html>
