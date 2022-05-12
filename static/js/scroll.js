@@ -3,7 +3,7 @@ function infinity_scroll_list(count) {
     window.onscroll = function (e) {
         //추가되는 임시 콘텐츠
         //window height + window scrollY 값이 document height보다 클 경우,
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight-50) {
             //실행할 로직 (콘텐츠 추가)
 
             let posts_lists = get_posts(count);

@@ -91,6 +91,9 @@ body {
     display: flex;
     flex-direction: column;
 }
+.navbar-item:hover{
+    background-color: #eeeeee;
+}
 nav{
    display: flex;
     flex-direction: row;
@@ -201,3 +204,11 @@ input::-webkit-calendar-picker-indicator {
     margin: 10px 10px 10px 0px;
 }
 /*------------- sort box end ------------- */
+
+span.info_unit a {
+    text-decoration: none;
+    color: #4a4a4a;
+}
+.post_delete:hover {
+    cursor: pointer;
+}

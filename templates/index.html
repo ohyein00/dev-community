@@ -40,20 +40,33 @@
     <script>const {L, C} = window._;</script>
     <script src='{{ url_for("static", filename="js/index.js") }}'></script>
     <script src='{{ url_for("static", filename="js/like.js") }}'></script>
+    <script src='{{ url_for("static", filename="js/scroll.js") }}'></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Devom - 개발자 커뮤니티</title>
     <script>
+        {% if session['username'] %}
+            const USER_NAME = '{{ session['username'] }}';
+        {% else %}
+            const USER_NAME = 'Guest';
+        {% endif %}
         $(document).ready(function () {
             let token = $.cookie('mytoken');
             if (token !== undefined) {
                 $(".login > small").text("로그아웃");
-                $('.login').prop('href', "/logout")
+                $('.login').prop('href', 'javascript:void(0)')
+                $('.login').attr('onclick', 'sign_out()')
             } else {
                 $(".login > small").text("로그인");
                 $('.login').prop('href', "/login")
+                $('.login').removeAttr('onclick')
             }
-            infinity_scroll_list(10);
+
+            let count = 10
+            if ($.cookie('count') !== undefined) {
+                count = $.cookie('count')
+            }
+            infinity_scroll_list(parseInt(count));
 
         })
 
@@ -89,6 +102,7 @@
                             let comment_list = post["comment_list"];
                             let image_temp = ``;
                             let comment_temp = ``;
+                            const postId = post['_id'];
                             console.log(comment_list)
                             for (const file of image_list) {
                                 let temp = `<div class="img_frame">
@@ -111,6 +125,11 @@
                                                 <small class="time contour left">${time_before}</small>
                                             </p>
                                             <p class="user_comment">${comment_list[j]['comment']}</p>
+                                           ${response["session"] === comment_list[j]["_id"] ?
+                                                                `<small class="feed_info">
+                                                                <span onclick="commentDelete('${comment_list[j]["_id"]}')"
+                                                                          class="time contour deleter">| 삭제</span>
+                                                                </small>` : ``}
                                         </div>
                                     </div>`
 
@@ -132,6 +151,13 @@
                                         <p class="feed_info">
                                             <span class="time">${time_before}</span>
                                             <span class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
+                                            ${post['username'] == USER_NAME
+                                ? `<span class="info_unit contour"><a href="/write?post_id=${postId}">수정</a></span>
+                                                   <span onclick="postDelete('${postId}')" class="info_unit contour">삭제</span>`
+                                : ``}
+
+                                            <span id="${post['_id']}_like" class="like_count left contour">좋아요 ${num2str(post['count_heart'])}</span>
+
                                         </p>
 
                                     </div>
@@ -292,8 +318,8 @@
                 </aside>
                 <section class="list_sec">
                     <div id="sort_box" class="container">
-                        <span id="new" onclick="sort('new')" class="sort_item">게시일&uarr;</span>
-                        <span id="old" onclick="sort('old')" class="sort_item">게시일&darr;</span>
+                        <span id="new" onclick="sort('new')" class="sort_item sort_hidden">게시일&uarr;</span>
+                        <span id="old" onclick="sort('old')" class="sort_item text_red">게시일&darr;</span>
                         <span id="like" onclick="sort('like')" class="sort_item">좋아요순</span>
                     </div>
                     <div id="post-box" class="container">
@@ -321,8 +347,10 @@
                                                 <span class="info_unit contour time">{{ post["time_difference"] }} 전</span>
                                                 <span class="info_unit contour">좋아요 {{ post['count_heart'] }}</span>
                                                 {% if user_id == post["username"] %}
-                                                    <span class="info_unit contour">수정</span>
-                                                    <span class="info_unit contour">삭제</span>
+
+                                                    <span class="info_unit contour"><a href="/write?post_id={{ post['_id'] }}">수정</a></span>
+                                                    <span onclick="postDelete('{{ post['_id'] }}')" class="info_unit contour post_delete">삭제</span>
+
                                                 {% else %}
                                                 {% endif %}
                                             </p>
@@ -386,15 +414,32 @@
                                                         <small style="font-size: xx-small">{{ comment["username"] }}</small>
                                                         <small class="time contour left">{{ comment["time_difference"] }}
                                                             전</small>
+                                                        <small class="feed_info">
+                                                            {% if user_id == comment["username"] %}
+                                                                <span onclick="commentDelete('{{ comment["_id"] }}')"
+                                                                      class="time contour deleter">| 삭제</span>
+                                                            {% endif %}
+                                                        </small>
                                                     </p>
                                                     <p class="user_comment">{{ comment["comment"] }}</p>
+
                                                 </div>
                                             </div>
                                         {% endfor %}
+                                        {% if post["count_comment"] > 3 %}
+                                            <diV style="width: 100%; display: flex; align-items: center; justify-content: center;">
+                                                <button style="border: 0px;" class="more_btn"
+                                                        onclick="toggle_comment()">
+                                                    <img width="15" height="15"
+                                                         src="/static/profile_pics/more_icon.png">
+                                                </button>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                     {% if user_id %}
                                         <div class="input_wrap">
                                             <div class="input_area gray_type is_flex">
+
                                                 <label class="{{ post['_id'] }}">
                                                     <input type="text" placeholder="댓글을 입력하세요" maxlength="100"
                                                            minlength="1">
