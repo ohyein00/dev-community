@@ -100,6 +100,8 @@ def main():
         post["_id"] = str(post["_id"])
         post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
         post["time_difference"] = time_difference(post["date"])
+        post_user = db.users.find_one({'username': post['username']})
+        post["profile_name"] = post_user["nickname"]
         image = []
         if len(post['img_ids']) > 0:
             for img_id in post['img_ids']:
@@ -112,6 +114,7 @@ def main():
             comment["_id"] = str(comment["_id"])
             comment["time_difference"] = time_difference(comment["date"])
             comment_user = db.users.find_one({'username': comment['username']})
+            comment["profile_name"] = comment_user["nickname"]
             profile_img = get_user_profile(comment_user)
             if profile_img is not False:
                 comment['comment_user_img'] = profile_img
@@ -265,26 +268,35 @@ def check_dup_nickname():
 def like_list():
     token_receive = request.cookies.get('mytoken')
     if token_receive is not None:
-        user_id = check_user_id()
         try:
             payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
             like_list = list(db.likes.find({"username": payload["id"]}).sort("_id", -1).limit(10))
-            posts = list();
+            user_id = check_user_id()
+            posts = list()
             for like in like_list:
                 temp = db.post_data.find_one({"_id": ObjectId(like["post_id"])})
                 if temp is not None:
                     posts.append(temp)
             # posts = list(db.post_data.find({ "$or": [{"_id":"627a7d829f7832603689b329"},{"_id":"627a8114ada74ce8b7468720"},{"_id":"627b06ca1d2c7f973e5b4d5f"}]}).sort("date", -1).skip(count).limit(3))
             posts_like = list()
+            if bool(user_id):
+                # 내 정보 불러오기
+                my_info = db.users.find_one({'username': user_id})
+                profile_img = get_user_profile(my_info)
+                if profile_img is not False:
+                    my_info['edit_my_img'] = profile_img
+            else:
+                my_info = False
             for post in posts:
                 post["_id"] = str(post["_id"])
                 post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
                 post["time_difference"] = time_difference(post["date"])
+                post_user = db.users.find_one({'username': post['username']})
+                post["profile_name"] = post_user["nickname"]
                 image = []
                 if len(post['img_ids']) > 0:
                     for img_id in post['img_ids']:
                         image.append(get_img_file(ObjectId(img_id)))
-
                 post["cut_text"] = cut_string(post["text"], 200)
                 post["s3_image_list"] = image
                 post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
@@ -292,15 +304,24 @@ def like_list():
                 for comment in post["comment_list"]:
                     comment["_id"] = str(comment["_id"])
                     comment["time_difference"] = time_difference(comment["date"])
-                # 좋아요 유저체크 분기
+                    comment_user = db.users.find_one({'username': comment['username']})
+                    comment["profile_name"] = comment_user["nickname"]
+                    profile_img = get_user_profile(comment_user)
+                    if profile_img is not False:
+                        comment['comment_user_img'] = profile_img
+                # 유저체크 분기
                 if bool(user_id):
                     post["heart_by_me"] = bool(
                         db.likes.find_one({"post_id": post["_id"], "username": user_id}))
                 else:
                     post["heart_by_me"] = False
-                posts_like.append(post)
+                # 작성자 프사 가져오기
+                post_user = db.users.find_one({'username': post['username']})
+                profile_img = get_user_profile(post_user)
+                if profile_img is not False:
+                    post['post_user_img'] = profile_img
 
-            return render_template("like_list.html", posts=posts_like, user_id=user_id)
+            return render_template("like_list.html", posts=posts, user_id=user_id, my_info=my_info)
         except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
             return redirect("/")
     else:
@@ -403,11 +424,9 @@ def comment_list():
 @app.route("/get_posts", methods=['GET'])
 def get_posts():
     count = int(request.args.get("count"))
-    token_receive = request.cookies.get('mytoken')
     sort_option = request.args['sortOption']
     try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-
+        user_id = check_user_id()
         if sort_option == 'old':
             posts = list(db.post_data.find({}).sort("date", 1).skip(count).limit(3))
         else:
@@ -416,18 +435,36 @@ def get_posts():
         for post in posts:
             post["_id"] = str(post["_id"])
             post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
-            post["heart_by_me"] = bool(
-                db.likes.find_one({"post_id": post["_id"], "username": payload["id"]}))
-
+            post["time_difference"] = time_difference(post["date"])
+            post_user = db.users.find_one({'username': post['username']})
+            post["profile_name"] = post_user["nickname"]
             image = []
             if len(post['img_ids']) > 0:
                 for img_id in post['img_ids']:
                     image.append(get_img_file(ObjectId(img_id)))
+            post["cut_text"] = cut_string(post["text"], 200)
             post["s3_image_list"] = image
             post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
-            post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
+            post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}).sort("date", -1))
             for comment in post["comment_list"]:
                 comment["_id"] = str(comment["_id"])
+                comment["time_difference"] = time_difference(comment["date"])
+                comment_user = db.users.find_one({'username': comment['username']})
+                comment["profile_name"] = comment_user["nickname"]
+                profile_img = get_user_profile(comment_user)
+                if profile_img is not False:
+                    comment['comment_user_img'] = profile_img
+            # 유저체크 분기
+            if bool(user_id):
+                post["heart_by_me"] = bool(
+                    db.likes.find_one({"post_id": post["_id"], "username": user_id}))
+            else:
+                post["heart_by_me"] = False
+            # 작성자 프사 가져오기
+            post_user = db.users.find_one({'username': post['username']})
+            profile_img = get_user_profile(post_user)
+            if profile_img is not False:
+                post['post_user_img'] = profile_img
 
         if sort_option == 'like':
             posts = sorted(posts, key=lambda post: -post['count_heart'])
@@ -442,6 +479,7 @@ def get_posts_like():
     count = int(request.args.get("count"))
     token_receive = request.cookies.get('mytoken')
     try:
+        user_id = check_user_id()
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         like_list = list(db.likes.find({"username": payload["id"]}).sort("_id", -1).skip(count).limit(3))
         posts = list();
@@ -454,19 +492,38 @@ def get_posts_like():
         for post in posts:
             post["_id"] = str(post["_id"])
             post["count_heart"] = db.likes.count_documents({"post_id": post["_id"]})
-            post["heart_by_me"] = bool(
-                db.likes.find_one({"post_id": post["_id"], "username": payload["id"]}))
-            if (post["heart_by_me"]):
-                image = []
-                if len(post['img_ids']) > 0:
-                    for img_id in post['img_ids']:
-                        image.append(get_img_file(ObjectId(img_id)))
-                post["s3_image_list"] = image
-                post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
-                post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}))
-                for comment in post["comment_list"]:
-                    comment["_id"] = str(comment["_id"])
-                posts_like.append(post)
+            post["time_difference"] = time_difference(post["date"])
+            post_user = db.users.find_one({'username': post['username']})
+            post["profile_name"] = post_user["nickname"]
+            image = []
+            if len(post['img_ids']) > 0:
+                for img_id in post['img_ids']:
+                    image.append(get_img_file(ObjectId(img_id)))
+            post["cut_text"] = cut_string(post["text"], 200)
+            post["s3_image_list"] = image
+            post["count_comment"] = db.comment.count_documents({"post_id": post["_id"]})
+            post["comment_list"] = list(db.comment.find({"post_id": post["_id"]}).sort("date", -1))
+            for comment in post["comment_list"]:
+                comment["_id"] = str(comment["_id"])
+                comment["time_difference"] = time_difference(comment["date"])
+                comment_user = db.users.find_one({'username': comment['username']})
+                comment["profile_name"] = comment_user["nickname"]
+                profile_img = get_user_profile(comment_user)
+                if profile_img is not False:
+                    comment['comment_user_img'] = profile_img
+            # 유저체크 분기
+            if bool(user_id):
+                post["heart_by_me"] = bool(
+                    db.likes.find_one({"post_id": post["_id"], "username": user_id}))
+            else:
+                post["heart_by_me"] = False
+            # 작성자 프사 가져오기
+            post_user = db.users.find_one({'username': post['username']})
+            profile_img = get_user_profile(post_user)
+            if profile_img is not False:
+                post['post_user_img'] = profile_img
+            posts_like.append(post)
+
         # 포스팅 목록 받아오기
         return jsonify(
             {"result": "success", "msg": "포스팅을 가져왔습니다.", "posts": posts_like, "session": session["username"]})
