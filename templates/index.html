@@ -37,7 +37,7 @@
     <link href='{{ url_for("static", filename="css/index.css") }}' rel="stylesheet">
     <link href='{{ url_for("static", filename="css/ui.css") }}' rel="stylesheet">
     <script src="https://unpkg.com/fxjs/dist/fx.js"></script>
-    <script>const { L, C } = window._;</script>
+    <script>const {L, C} = window._;</script>
     <script src='{{ url_for("static", filename="js/index.js") }}'></script>
     <script src='{{ url_for("static", filename="js/like.js") }}'></script>
     <script src='{{ url_for("static", filename="js/scroll.js") }}'></script>
@@ -48,29 +48,20 @@
     <script>
         {% if session['username'] %}
             const USER_NAME = '{{ session['username'] }}';
+        {% else %}
+            const USER_NAME = 'Guest';
         {% endif %}
 
         let currentImages = [];
 
         $(document).ready(function () {
-            let token = $.cookie('mytoken');
-            if (token !== undefined) {
-                $(".login > small").text("로그아웃");
-                $('.login').prop('href', "/logout")
-            } else {
-                $(".login > small").text("로그인");
-                $('.login').prop('href', "/login")
-            }
-
-            infinity_scroll_list(10);
 
             let count = 10
-            if ($.cookie('count') !== undefined){
+            if ($.cookie('count') !== undefined) {
                 count = $.cookie('count')
             }
             infinity_scroll_list(parseInt(count));
         })
-
 
 
         // 검색
@@ -128,6 +119,11 @@
                                                 <small class="time contour left">${time_before}</small>
                                             </p>
                                             <p class="user_comment">${comment_list[j]['comment']}</p>
+                                           ${response["session"] === comment_list[j]["_id"] ?
+                                                                `<small class="feed_info">
+                                                                <span onclick="commentDelete('${comment_list[j]["_id"]}')"
+                                                                          class="time contour deleter">| 삭제</span>
+                                                                </small>` : ``}
                                         </div>
                                     </div>`
 
@@ -175,7 +171,7 @@
                                         </button>
                                     </p>
 
-                                    <div class="img_group">
+                                    <div class="img_group" onclick="imageModal(this)">
                                         ${image_temp}
                                     </div>
                                 </div>
@@ -238,37 +234,35 @@
                             </span>
                     </div>
                     <div class="navbar-brand" style="padding: 0px; margin-bottom: 0px; margin-top: 0px;">
-                        <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+                        <a class="navbar-item" href="/" style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px">
 
                             <strong class="is-sparta"
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
                                     style="color:black" class="fa fa-list" aria-hidden="true"></i></strong>
                         </a>
-                        <a class="navbar-item" href="/write"
-                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+                        <button class="navbar-item" href="/write" onclick="location_change('/write')"
+                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px">
                             <strong class="is-sparta"
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i
                                     style="color:darkblue" class="fa fa-pencil-square-o"
                                     aria-hidden="true"></i></strong>
 
-                        </a>
-                        <a class="navbar-item" href="/like_list"
-                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+                        </button>
+                        <button  class="navbar-item" href="/like_list" onclick="location_change('/like_list')"
+                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px">
                             <strong class="is-sparta"
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;">
                                 <i style="color:crimson"
                                    class="fa fa-heart"
                                    aria-hidden="true"></i></strong>
-                        </a>
-                        <a class="navbar-item" href="/profile"
-                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px;">
+                        </button>
+                        <button class="navbar-item" href="/profile" onclick="location_change('/profile')"
+                           style="margin-bottom: 0px; margin-top: 0px; padding: 3px 15px; border: 0px">
                             <strong class="is-sparta"
                                     style="font-family: 'Stylish', sans-serif;font-size: 28px;"><i style="color:gray"
                                                                                                    class="fa fa-user"
                                                                                                    aria-hidden="true"></i></strong>
-
-
-                        </a>
+                        </button>
 
 
                     </div>
@@ -305,8 +299,10 @@
                                                 <span class="info_unit contour time">{{ post["time_difference"] }} 전</span>
                                                 <span class="info_unit contour">좋아요 {{ post['count_heart'] }}</span>
                                                 {% if user_id == post["username"] %}
+
                                                     <span class="info_unit contour"><a href="/write?post_id={{ post['_id'] }}">수정</a></span>
                                                     <span onclick="postDelete('{{ post['_id'] }}')" class="info_unit contour post_delete">삭제</span>
+
                                                 {% else %}
                                                 {% endif %}
                                             </p>
@@ -365,15 +361,24 @@
                                                         <small style="font-size: xx-small">{{ comment["username"] }}</small>
                                                         <small class="time contour left">{{ comment["time_difference"] }}
                                                             전</small>
+                                                        <small class="feed_info">
+                                                            {% if user_id == comment["username"] %}
+                                                                <span onclick="commentDelete('{{ comment["_id"] }}')"
+                                                                      class="time contour deleter">| 삭제</span>
+                                                            {% endif %}
+                                                        </small>
                                                     </p>
                                                     <p class="user_comment">{{ comment["comment"] }}</p>
+
                                                 </div>
                                             </div>
                                         {% endfor %}
                                         {% if post["count_comment"] > 3 %}
                                             <diV style="width: 100%; display: flex; align-items: center; justify-content: center;">
-                                                <button style="border: 0px;"  class="more_btn" onclick="toggle_comment()">
-                                                    <img width="15" height="15" src="/static/profile_pics/more_icon.png">
+                                                <button style="border: 0px;" class="more_btn"
+                                                        onclick="toggle_comment()">
+                                                    <img width="15" height="15"
+                                                         src="/static/profile_pics/more_icon.png">
                                                 </button>
                                             </div>
                                         {% endif %}
@@ -383,7 +388,8 @@
                                             <div class="input_area gray_type is_flex">
 
                                                 <label class="{{ post['_id'] }}">
-                                                    <input type="text" placeholder="댓글을 입력하세요" maxlength="100" minlength ="1">
+                                                    <input type="text" placeholder="댓글을 입력하세요" maxlength="100"
+                                                           minlength="1">
                                                 </label>
                                                 <button type="submit" onclick="comment('{{ post['_id'] }}')">
                                                     입력
@@ -404,7 +410,7 @@
 <div id="img_modal_wrap"
      onclick="if (event.target.className === 'slide-img') return; $(this).addClass('hidden');"
      class="hidden w-full h-[100vh] fixed z-40 left-0 top-0 bg-black/50 flex justify-center items-center">
-        <div class="w-full flex items-center">
+        <div class="w-full max-w-full max-h-[80%] flex items-center">
             <div class="swiper">
                 <div id="img_swiper_container" class="swiper-wrapper">
 

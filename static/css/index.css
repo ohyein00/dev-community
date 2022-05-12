@@ -88,6 +88,9 @@ body {
     display: flex;
     flex-direction: column;
 }
+.navbar-item:hover{
+    background-color: #eeeeee;
+}
 nav{
    display: flex;
     flex-direction: row;
