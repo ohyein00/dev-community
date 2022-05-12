@@ -1,3 +1,6 @@
 *.pyc
 __pycache__/
+.error_log
 .idea
+venv
+error.log
